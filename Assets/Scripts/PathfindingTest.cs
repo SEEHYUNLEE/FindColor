@@ -1,201 +1,737 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.Multiplayer.PlayMode;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.Tilemaps;
 
 public class PathfindingTest : MonoBehaviour
 {
-    [SerializeField] private GameObject playerPrefab;     // 플레이어 프리팹
-    [SerializeField] private GameObject destinationPrefab;// 도착지 프리팹
-    private GameObject currentPlayer;
-    private GameObject currentDestination;
+    [Header("References")]
+    public Transform player;
 
-    private Transform start, destination;
-    public MapGenerator mapGenerator; // 맵 제너레이터 연결
-    public Tilemap floorTilemap;      // 월드 좌표 변환용 타일맵
+    [Header("Movement")]
+    public float moveSpeed = 3.5f;
+    public float reachThreshold = 0.05f;
 
-    private Vector3 cacheStart, cacheDest;
+    // 플레이어가 이 거리 안으로 들어오면 도망 시작
+    public float dangerDistance = 3f;
+
+    [Header("Escape Region")]
+    [Range(0f, 1f)]
+    public float oppositeDirectionWeight = 0.7f;
+
+    // 플레이어로부터 최소 몇 % 이상 먼 지역만 후보로 사용할지
+    [Range(0f, 1f)]
+    public float minimumFarDistanceRatio = 0.65f;
+
     private Grid grid;
+
+    private bool isInitialized;
+    private bool isMoving;
+
+    private bool wasInDanger;
+
+    private int targetIndex;
+
+    private Node currentDestination;
+
 
     void Awake()
     {
         grid = GetComponent<Grid>();
+
+        if (player == null)
+        {
+            GameObject playerObject =
+                GameObject.FindWithTag("Player");
+
+            if (playerObject != null)
+            {
+                player = playerObject.transform;
+            }
+        }
     }
 
-    void Start()
-    {
-        // 게임 시작 시 최초 맵 생성 및 배치
-        GenerateAndSetup();
-    }
 
     void Update()
     {
-        // 테스트용: 스페이스바를 누를 때마다 새로운 맵 생성 후 랜덤 배치 및 길찾기
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+        if (grid == null || player == null)
+            return;
+
+        if (!grid.isGridCreated)
+            return;
+
+
+        // =====================================================
+        // 최초 초기화
+        //
+        // 게임 시작 시에는 절대로 도망가지 않음
+        // =====================================================
+
+        if (!isInitialized)
         {
-            GenerateAndSetup();
+            isInitialized = true;
+
+            wasInDanger = false;
+
+            return;
         }
 
-        if (start == null || destination == null) return;
 
-        if (start.position != cacheStart || destination.position != cacheDest)
+        // =====================================================
+        // 플레이어와의 거리
+        // =====================================================
+
+        float distance =
+            Vector3.Distance(
+                transform.position,
+                player.position
+            );
+
+
+        bool inDanger =
+            distance <= dangerDistance;
+
+
+        // =====================================================
+        // 플레이어가 처음 dangerDistance 안으로 들어왔을 때
+        // =====================================================
+
+        if (inDanger && !wasInDanger)
         {
-            FindPath(start.position, destination.position);
+            StartEscape();
+        }
 
-            cacheStart = start.position;
-            cacheDest = destination.position;
+
+        wasInDanger = inDanger;
+
+
+        // =====================================================
+        // 이동 중
+        // =====================================================
+
+        if (isMoving)
+        {
+            MoveAlongPath();
+        }
+
+
+        // =====================================================
+        // 이동이 끝났는데 플레이어가 아직 가까이 있다면
+        // 다시 도망
+        // =====================================================
+
+        else if (inDanger)
+        {
+            StartEscape();
         }
     }
 
-    // 맵을 새로 만들고 플레이어와 도착지를 랜덤 방에 배치하는 함수
-    public void GenerateAndSetup()
+
+    // =========================================================
+    // 도망 시작
+    // =========================================================
+
+    void StartEscape()
     {
-        if (mapGenerator == null)
+        Node destination =
+            FindEscapeDestination();
+
+
+        if (destination == null)
         {
+            isMoving = false;
             return;
         }
 
-        if (floorTilemap == null)
-        {
-            return;
-        }
 
-        if (mapGenerator != null)
-        {
-            mapGenerator.CreateNewMap(); // 1. 새로운 맵 생성
-        }
+        currentDestination =
+            destination;
 
-        // 맵이 바뀐 후, Grid 데이터 새로 갱신
-        if (grid != null)
-        {
-            grid.CreateGrid(); 
-        }
 
-        if (currentPlayer != null) Destroy(currentPlayer);
-        if (currentDestination != null) Destroy(currentDestination);
+        bool success =
+            FindPath(
+                transform.position,
+                destination
+            );
 
-        if (mapGenerator != null && mapGenerator.roomCenters.Count >= 2 && floorTilemap != null)
-        {
-            List<Vector3Int> availableRooms = new List<Vector3Int>(mapGenerator.roomCenters);
 
-            int index1 = Random.Range(0, availableRooms.Count);
-            Vector3Int startCell = availableRooms[index1];
-            availableRooms.RemoveAt(index1);
-
-            int index2 = Random.Range(0, availableRooms.Count);
-            Vector3Int destCell = availableRooms[index2];
-
-            // 소환 위치를 미리 계산
-            Vector3 startPos = floorTilemap.GetCellCenterWorld(startCell);
-            Vector3 destPos = floorTilemap.GetCellCenterWorld(destCell);
-
-            // 프리팹 먼저 소환 후, 그 Transform을 start/destination 변수에 대입
-            if (playerPrefab != null)
-            {
-                currentPlayer = Instantiate(playerPrefab, startPos, Quaternion.identity);
-                start = currentPlayer.transform; // 여기서 할당됨
-                grid.SetPlayer(start);
-            }
-
-            if (destinationPrefab != null)
-            {
-                currentDestination = Instantiate(destinationPrefab, destPos, Quaternion.identity);
-                destination = currentDestination.transform; // 여기서 할당됨
-            }
-        }
+        isMoving =
+            success;
     }
 
-    void FindPath(Vector3 startPos, Vector3 targetPos)
+
+    // =========================================================
+    // 도망 목적지 탐색
+    //
+    // 1. 플레이어 기준 다익스트라
+    // 2. 플레이어로부터 충분히 먼 지역
+    // 3. 플레이어 → 적 방향 우선
+    // 4. 적으로부터도 먼 위치 우선
+    // =========================================================
+
+    Node FindEscapeDestination()
     {
-        // grid가 비어있는지 체크
-        if (grid == null)
+        Node playerNode =
+            grid.GetNodeFromPosition(
+                player.position
+            );
+
+
+        Node enemyNode =
+            grid.GetNodeFromPosition(
+                transform.position
+            );
+
+
+        if (playerNode == null ||
+            enemyNode == null)
         {
-            grid = GetComponent<Grid>();
-            if (grid == null) return;
+            return null;
         }
 
-        Node startNode = grid.GetNodeFromPosition(startPos);
-        Node targetNode = grid.GetNodeFromPosition(targetPos);
 
-        if (startNode == null || targetNode == null)
+        // =====================================================
+        // 1. 플레이어 기준 다익스트라
+        // =====================================================
+
+        foreach (Node node in grid.GetAllNodes())
         {
-            return;
+            node.gCost = int.MaxValue;
+            node.parent = null;
         }
 
-        MinPriorityQueue<Node> openSet = new MinPriorityQueue<Node>();
-        HashSet<Node> closedSet = new HashSet<Node>();
 
-        openSet.Enqueue(startNode);
+        MinPriorityQueue<Node> openSet =
+            new MinPriorityQueue<Node>();
+
+
+        playerNode.gCost = 0;
+
+        openSet.Enqueue(playerNode);
+
+
         while (openSet.Count > 0)
         {
-            Node currentNode = openSet.Dequeue();
+            Node current =
+                openSet.Dequeue();
 
-            if (currentNode == targetNode)
+
+            foreach (Node neighbor
+                     in grid.GetNeighbours(current))
             {
-                RetracePath(startNode, targetNode);
-                return;
-            }
-
-            closedSet.Add(currentNode);
-
-            foreach (Node n in grid.GetNeighbours(currentNode))
-            {
-                if (n == null || !n.isWalkable || closedSet.Contains(n))
-                {
+                if (!neighbor.isWalkable)
                     continue;
-                }
 
-                int g = currentNode.gCost + GetDistance(currentNode, n);
-                int h = GetDistance(n, targetNode);
-                int f = g + h;
 
-                if (!openSet.Contains(n))
+                int newCost =
+                    current.gCost +
+                    GetDistance(
+                        current,
+                        neighbor
+                    );
+
+
+                if (newCost < neighbor.gCost)
                 {
-                    n.gCost = g;
-                    n.hCost = h;
-                    n.parent = currentNode;
-                    openSet.Enqueue(n);
+                    neighbor.gCost = newCost;
+                    neighbor.parent = current;
+
+                    openSet.Enqueue(neighbor);
                 }
-                else
+            }
+        }
+
+
+        // =====================================================
+        // 2. 플레이어 기준 가장 먼 거리
+        // =====================================================
+
+        int maxPlayerDistance = 0;
+
+
+        foreach (Node node in grid.GetAllNodes())
+        {
+            if (!node.isWalkable)
+                continue;
+
+
+            if (node.gCost == int.MaxValue)
+                continue;
+
+
+            if (node.gCost > maxPlayerDistance)
+            {
+                maxPlayerDistance =
+                    node.gCost;
+            }
+        }
+
+
+        if (maxPlayerDistance <= 0)
+            return null;
+
+
+        int minimumDistance =
+            Mathf.RoundToInt(
+                maxPlayerDistance *
+                minimumFarDistanceRatio
+            );
+
+
+        // =====================================================
+        // 3. 플레이어 → 적 방향
+        // =====================================================
+
+        Vector2 playerToEnemy =
+            enemyNode.position -
+            playerNode.position;
+
+
+        if (playerToEnemy.sqrMagnitude <= 0.01f)
+        {
+            playerToEnemy =
+                Vector2.right;
+        }
+
+
+        playerToEnemy.Normalize();
+
+
+        // =====================================================
+        // 4. 후보 탐색
+        // =====================================================
+
+        Node bestNode = null;
+
+        float bestScore =
+            float.MinValue;
+
+
+        foreach (Node node in grid.GetAllNodes())
+        {
+            if (!node.isWalkable)
+                continue;
+
+
+            if (node.gCost == int.MaxValue)
+                continue;
+
+
+            // 플레이어에게서 충분히 먼 곳만 후보
+            if (node.gCost < minimumDistance)
+                continue;
+
+
+            // 직전 목적지와 같은 곳은 제외
+            if (node == currentDestination)
+                continue;
+
+
+            Vector2 playerToNode =
+                node.position -
+                playerNode.position;
+
+
+            if (playerToNode.sqrMagnitude <= 0.01f)
+                continue;
+
+
+            playerToNode.Normalize();
+
+
+            // =================================================
+            // 방향 비교
+            // =================================================
+
+            float directionScore =
+                Vector2.Dot(
+                    playerToEnemy,
+                    playerToNode
+                );
+
+
+            float oppositeScore =
+                (directionScore + 1f) * 0.5f;
+
+
+            // =================================================
+            // 적으로부터 목적지까지 거리
+            // =================================================
+
+            float enemyDistance =
+                Vector3.Distance(
+                    enemyNode.position,
+                    node.position
+                );
+
+
+            // =================================================
+            // 최종 점수
+            // =================================================
+
+            float normalizedPlayerDistance =
+                (float)node.gCost /
+                maxPlayerDistance;
+
+
+            float normalizedEnemyDistance =
+                enemyDistance /
+                (maxPlayerDistance * 0.1f + 1f);
+
+
+            float score =
+                normalizedPlayerDistance * 5f +
+                oppositeScore *
+                oppositeDirectionWeight *
+                10f +
+                normalizedEnemyDistance * 2f;
+
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestNode = node;
+            }
+        }
+
+
+        // =====================================================
+        // 후보가 없으면 가장 먼 Node
+        // =====================================================
+
+        if (bestNode == null)
+        {
+            int maxCost = -1;
+
+
+            foreach (Node node in grid.GetAllNodes())
+            {
+                if (!node.isWalkable)
+                    continue;
+
+
+                if (node.gCost == int.MaxValue)
+                    continue;
+
+
+                if (node == currentDestination)
+                    continue;
+
+
+                if (node.gCost > maxCost)
                 {
-                    if (n.fCost > f)
-                    {
-                        n.gCost = g;
-                        n.parent = currentNode;
-                        openSet.Reposition(n);
-                    }
+                    maxCost =
+                        node.gCost;
+
+                    bestNode =
+                        node;
                 }
+            }
+        }
+
+
+        return bestNode;
+    }
+
+
+    // =========================================================
+    // A*
+    // =========================================================
+
+    bool FindPath(
+        Vector3 startPos,
+        Node targetNode)
+    {
+        Node startNode =
+            grid.GetNodeFromPosition(
+                startPos
+            );
+
+
+        if (startNode == null ||
+            targetNode == null)
+        {
+            return false;
+        }
+
+
+        if (startNode == targetNode)
+        {
+            grid.path.Clear();
+
+            targetIndex = 0;
+
+            return false;
+        }
+
+
+        foreach (Node node in grid.GetAllNodes())
+        {
+            node.gCost = int.MaxValue;
+            node.hCost = 0;
+            node.parent = null;
+        }
+
+
+        MinPriorityQueue<Node> openSet =
+            new MinPriorityQueue<Node>();
+
+
+        HashSet<Node> closedSet =
+            new HashSet<Node>();
+
+
+        startNode.gCost = 0;
+
+
+        startNode.hCost =
+            GetDistance(
+                startNode,
+                targetNode
+            );
+
+
+        openSet.Enqueue(startNode);
+
+
+        while (openSet.Count > 0)
+        {
+            Node current =
+                openSet.Dequeue();
+
+
+            if (current == targetNode)
+            {
+                RetracePath(
+                    startNode,
+                    targetNode
+                );
+
+                return true;
+            }
+
+
+            closedSet.Add(current);
+
+
+            foreach (Node neighbor
+                     in grid.GetNeighbours(current))
+            {
+                if (!neighbor.isWalkable)
+                    continue;
+
+
+                if (closedSet.Contains(neighbor))
+                    continue;
+
+
+                int newGCost =
+                    current.gCost +
+                    GetDistance(
+                        current,
+                        neighbor
+                    );
+
+
+                if (!openSet.Contains(neighbor))
+                {
+                    neighbor.gCost =
+                        newGCost;
+
+
+                    neighbor.hCost =
+                        GetDistance(
+                            neighbor,
+                            targetNode
+                        );
+
+
+                    neighbor.parent =
+                        current;
+
+
+                    openSet.Enqueue(
+                        neighbor
+                    );
+                }
+                else if (newGCost < neighbor.gCost)
+                {
+                    neighbor.gCost =
+                        newGCost;
+
+
+                    neighbor.hCost =
+                        GetDistance(
+                            neighbor,
+                            targetNode
+                        );
+
+
+                    neighbor.parent =
+                        current;
+
+
+                    openSet.Reposition(
+                        neighbor
+                    );
+                }
+            }
+        }
+
+
+        grid.path.Clear();
+
+        targetIndex = 0;
+
+        return false;
+    }
+
+
+    // =========================================================
+    // 경로 생성
+    // =========================================================
+
+    void RetracePath(
+        Node startNode,
+        Node endNode)
+    {
+        List<Node> newPath =
+            new List<Node>();
+
+
+        Node current =
+            endNode;
+
+
+        while (current != startNode &&
+               current != null)
+        {
+            newPath.Add(current);
+
+            current =
+                current.parent;
+        }
+
+
+        newPath.Reverse();
+
+
+        grid.path =
+            newPath;
+
+
+        targetIndex = 0;
+    }
+
+
+    // =========================================================
+    // 이동
+    // =========================================================
+
+    void MoveAlongPath()
+    {
+        if (grid.path == null ||
+            grid.path.Count == 0)
+        {
+            isMoving = false;
+            return;
+        }
+
+
+        if (targetIndex >= grid.path.Count)
+        {
+            isMoving = false;
+            return;
+        }
+
+
+        Node targetNode =
+            grid.path[targetIndex];
+
+
+        Vector3 targetPos =
+            targetNode.position;
+
+
+        targetPos.z =
+            transform.position.z;
+
+
+        transform.position =
+            Vector3.MoveTowards(
+                transform.position,
+                targetPos,
+                moveSpeed *
+                Time.deltaTime
+            );
+
+
+        if (Vector3.Distance(
+                transform.position,
+                targetPos
+            ) <= reachThreshold)
+        {
+            targetIndex++;
+
+
+            if (targetIndex >= grid.path.Count)
+            {
+                isMoving = false;
             }
         }
     }
 
-    void RetracePath(Node startNode, Node endNode)
-    {
-        List<Node> path = new List<Node>();
-        Node currentNode = endNode;
 
-        while (currentNode != startNode)
+    // =========================================================
+    // 이동 비용
+    // =========================================================
+
+    int GetDistance(
+        Node a,
+        Node b)
+    {
+        int dx =
+            Mathf.Abs(
+                a.gridX -
+                b.gridX
+            );
+
+
+        int dy =
+            Mathf.Abs(
+                a.gridY -
+                b.gridY
+            );
+
+
+        if (dx > dy)
         {
-            path.Add(currentNode);
-            currentNode = currentNode.parent;
+            return
+                14 * dy +
+                10 * (dx - dy);
         }
 
-        path.Reverse();
-        grid.path = path;
+
+        return
+            14 * dx +
+            10 * (dy - dx);
     }
 
-    int GetDistance(Node nodeA, Node nodeB)
+
+    // =========================================================
+    // Gizmo
+    // =========================================================
+
+    void OnDrawGizmos()
     {
-        int dstX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
-        int dstY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
-
-        if (dstX > dstY)
+        if (currentDestination != null)
         {
-            return 14 * dstY + 10 * (dstX - dstY);
-        }
+            Gizmos.color =
+                Color.red;
 
-        return 14 * dstX + 10 * (dstY - dstX);
+
+            Gizmos.DrawSphere(
+                currentDestination.position,
+                0.4f
+            );
+        }
     }
 }
