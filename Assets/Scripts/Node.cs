@@ -1,21 +1,34 @@
 using System;
 using UnityEngine;
 
-[Serializable] // Á÷·ÄÈ­ : ³»ºÎ µ¥ÀÌÅÍ ÀúÀå ¹× À¯´ÏÆ¼ ÀÎ½ºÆåÅÍ¿¡¼­ È®ÀÎ °¡´É
-public class Node : IComparable<Node> // Å©±â¸¦ ºñ±³ÇÏ´Â ±ÔÄ¢¸¸µé±â, CompareTo ÇÔ¼ö ±¸Çö ÇÊ¼ö
+[Serializable]
+public class Node : IComparable<Node>
 {
-
     public bool isWalkable;
     public Vector3 position;
+
     public int gridX;
     public int gridY;
 
-    public int gCost; // ½ÃÀÛ ³ëµå¿¡¼­ ÇöÀç ³ëµå±îÁö ÀÌµ¿ÇÑ ÃÑ ºñ¿ë
-    public int hCost; // ÇöÀç ³ëµå¿¡¼­ ¸ñÀûÁö±îÁö Á÷¼± °Å¸®
-    public int fCost { get { return gCost + hCost; } }
+    // Pathfinding
+    public int gCost;
+    public int hCost;
+
+    public int fCost
+    {
+        get
+        {
+            return gCost + hCost;
+        }
+    }
+
     public Node parent;
 
-    public Node(bool walkable, Vector3 position, int gridX, int gridY)
+    public Node(
+        bool walkable,
+        Vector3 position,
+        int gridX,
+        int gridY)
     {
         this.isWalkable = walkable;
         this.position = position;
@@ -25,26 +38,36 @@ public class Node : IComparable<Node> // Å©±â¸¦ ºñ±³ÇÏ´Â ±ÔÄ¢¸¸µé±â, CompareTo Ç
 
     public int CompareTo(Node otherNode)
     {
-        if (this.fCost < otherNode.fCost) return -1;
-        else if (this.fCost > otherNode.fCost) return 1;
-        else return 0;
+        if (this.fCost < otherNode.fCost)
+            return -1;
+
+        if (this.fCost > otherNode.fCost)
+            return 1;
+
+        return 0;
     }
 
+    // BSP¿ë µ¥ÀÌÅÍ
     public Node leftNode;
     public Node rightNode;
     public Node parNode;
-    public RectInt nodeRect; //ºÐ¸®µÈ °ø°£ÀÇ rectÁ¤º¸
-    public RectInt roomRect; //ºÐ¸®µÈ °ø°£ ¼Ó ¹æÀÇ rectÁ¤º¸
+
+    public RectInt nodeRect;
+    public RectInt roomRect;
+
     public Vector2Int center
     {
         get
         {
-            return new Vector2Int(roomRect.x + roomRect.width / 2, roomRect.y + roomRect.height / 2);
+            return new Vector2Int(
+                roomRect.x + roomRect.width / 2,
+                roomRect.y + roomRect.height / 2
+            );
         }
-        //¹æÀÇ °¡¿îµ¥ Á¡. ¹æ°ú ¹æÀ» ÀÌÀ» ¶§ »ç¿ë
     }
+
     public Node(RectInt rect)
     {
-        this.nodeRect = rect;
+        nodeRect = rect;
     }
 }
