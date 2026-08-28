@@ -6,13 +6,23 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Tilemap floorTilemap;
     [SerializeField] private Animator animator;
-    private float walkSpeed = 2f;  // 걷기 속도
-    private float runSpeed = 4f;   // [추가] 달리기 속도
+
+    // [추가] 공격 이펙트 관련 변수
+    [Header("Attack Settings")]
+    [SerializeField] private GameObject attackEffectPrefab; // 날아갈 이펙트 프리팹
+    [SerializeField] private float projectileSpeed = 3f;   // 이펙트가 날아가는 속도
+    [SerializeField] private Transform firePoint;           // (선택) 발사 위치. 비워두면 플레이어 몸 중앙(transform.position)에서 발사
+
+    private float walkSpeed = 2f;
+    private float runSpeed = 4f;
 
     private Rigidbody2D rb;
     private Vector2 movement;
     private bool isFacingRight = true;
     private bool isAttacking = false;
+
+    // [추가] 마우스 클릭 방향을 저장할 변수
+    private Vector2 attackDirection;
 
     void Start()
     {
@@ -33,7 +43,7 @@ public class PlayerController : MonoBehaviour
             if (animator != null)
             {
                 animator.SetBool("IsWalking", false);
-                animator.SetBool("IsRunning", false); // [추가] 공격 중일 때 달리기 애니메이션도 끄기
+                animator.SetBool("IsRunning", false);
             }
             return;
         }
@@ -43,26 +53,21 @@ public class PlayerController : MonoBehaviour
 
         if (Keyboard.current != null)
         {
-            // A/D 또는 좌/우 화살표
             if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) moveX += 1f;
             if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) moveX -= 1f;
 
-            // W/S 또는 상/하 화살표
             if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) moveY += 1f;
             if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) moveY -= 1f;
         }
 
         movement = new Vector2(moveX, moveY).normalized;
 
-        // [추가] 왼쪽 또는 오른쪽 Shift 키가 눌려있는지 확인
         bool isShiftPressed = Keyboard.current != null &&
                               (Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed);
 
-        // [추가] 이동 중이면서 Shift를 누르고 있으면 달리기 속도, 아니면 걷기 속도 적용
         bool isMoving = movement.sqrMagnitude > 0.01f;
         float currentSpeed = isShiftPressed ? runSpeed : walkSpeed;
 
-        // 스케일을 이용한 좌우 반전 처리
         if (moveX > 0f && !isFacingRight)
         {
             Flip();
@@ -72,7 +77,6 @@ public class PlayerController : MonoBehaviour
             Flip();
         }
 
-        // [수정] 걷기 및 달리기 애니메이션 처리
         if (animator != null)
         {
             bool isWalking = isMoving && !isShiftPressed;
@@ -82,7 +86,7 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("IsRunning", isRunning);
         }
 
-        // 마우스 왼쪽 클릭 시 공격 시작
+        // [수정] 마우스 왼쪽 클릭 시 공격 시작 및 방향 계산
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             if (animator != null && !isAttacking)
@@ -90,20 +94,55 @@ public class PlayerController : MonoBehaviour
                 isAttacking = true;
                 movement = Vector2.zero;
                 animator.SetTrigger("Attack");
+
+                // 1. 마우스의 화면 좌표를 월드 좌표로 변환
+                Vector2 mouseScreenPosition = Mouse.current.position.ReadValue();
+                Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+                mouseWorldPosition.z = 0f; // 2D이므로 z축은 0으로 맞춤
+
+                // 2. 발사 기준 위치 설정 (firePoint가 없으면 transform.position 사용)
+                Vector3 originPosition = firePoint != null ? firePoint.position : transform.position;
+
+                // 3. 공격 방향 계산 (마우스 위치 - firePoint 위치)
+                attackDirection = (mouseWorldPosition - originPosition).normalized;
             }
         }
 
         if (floorTilemap == null) return;
 
-        // [수정] 현재 속도(currentSpeed)를 반영하여 다음 위치 계산
         Vector2 nextPosition = rb.position + movement * currentSpeed * Time.fixedDeltaTime;
-
-        // 바닥 타일맵 위인지 검사
         Vector3Int cellPos = floorTilemap.WorldToCell(nextPosition);
 
         if (floorTilemap.HasTile(cellPos))
         {
             rb.MovePosition(nextPosition);
+        }
+    }
+
+    // [추가] 애니메이션 이벤트에서 호출할 프리팹 발사 함수
+    public void SpawnAttackEffect()
+    {
+        if (attackEffectPrefab == null)
+        {
+            Debug.LogWarning("공격 이펙트 프리팹이 할당되지 않았습니다!");
+            return;
+        }
+
+        // 1. 발사 위치 설정 (firePoint가 지정되어 있으면 그 위치, 없으면 플레이어 중심)
+        Vector3 spawnPosition = firePoint != null ? firePoint.position : transform.position;
+
+        // 2. 이펙트 생성
+        GameObject effect = Instantiate(attackEffectPrefab, spawnPosition, Quaternion.identity);
+
+        // 3. 이펙트가 날아가는 방향을 바라보도록 회전 (이미지가 돌아가야 자연스러움)
+        float angle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
+        effect.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+        // 4. Rigidbody2D를 이용해 이펙트 날려보내기
+        Rigidbody2D effectRb = effect.GetComponent<Rigidbody2D>();
+        if (effectRb != null)
+        {
+            effectRb.linearVelocity = attackDirection * projectileSpeed;
         }
     }
 

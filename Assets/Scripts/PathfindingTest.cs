@@ -7,11 +7,11 @@ public class PathfindingTest : MonoBehaviour
     public Transform player;
 
     [Header("Movement")]
-    public float moveSpeed = 3.5f;
+    public float moveSpeed = 5f;
     public float reachThreshold = 0.05f;
 
     // 플레이어가 이 거리 안으로 들어오면 도망 시작
-    public float dangerDistance = 3f;
+    public float dangerDistance = 1.5f;
 
     [Header("Escape Region")]
     [Range(0f, 1f)]
@@ -129,7 +129,7 @@ public class PathfindingTest : MonoBehaviour
     // 도망 시작
     // =========================================================
 
-    void StartEscape()
+    public void StartEscape()
     {
         Node destination =
             FindEscapeDestination();
