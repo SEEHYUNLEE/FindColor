@@ -407,10 +407,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7916835966042299795, guid: a3d9c0c9a11794b4394170757c18eb81, type: 3}
-      propertyPath: animator
-      value: 
-      objectReference: {fileID: 1378840047}
-    - target: {fileID: 7916835966042299795, guid: a3d9c0c9a11794b4394170757c18eb81, type: 3}
       propertyPath: floorTilemap
       value: 
       objectReference: {fileID: 1729214321}
@@ -503,7 +499,7 @@ TilemapRenderer:
   m_SortingOrder: -4
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_ChunkCullingBounds: {x: 0, y: 0.5, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 3
@@ -1356,11 +1352,6 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 3
   m_CellSwizzle: 0
---- !u!95 &1378840047 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 3769904382699576641, guid: a3d9c0c9a11794b4394170757c18eb81, type: 3}
-  m_PrefabInstance: {fileID: 712913035}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1378840048 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1531417564246500712, guid: a3d9c0c9a11794b4394170757c18eb81, type: 3}
@@ -4036,7 +4027,7 @@ TilemapRenderer:
   m_SortingOrder: -5
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_ChunkCullingBounds: {x: 0, y: 0.5, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 3
@@ -4141,7 +4132,7 @@ TilemapRenderer:
   m_SortingOrder: -3
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_ChunkCullingBounds: {x: 0, y: 0.5, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 3
@@ -8226,7 +8217,7 @@ TilemapRenderer:
   m_SortingOrder: -10
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_ChunkCullingBounds: {x: 0, y: 0.5, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 3
