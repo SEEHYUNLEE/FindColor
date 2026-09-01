@@ -47,6 +47,8 @@ public class SlimeController : MonoBehaviour
         new Color(0.6f, 0.2f, 0.8f)  // 보라
     };
 
+    public GameObject itemPrefab;
+
     void Awake()
     {
         currentHP = maxHP;
@@ -143,7 +145,7 @@ public class SlimeController : MonoBehaviour
         }
         flashCoroutine = StartCoroutine(FlashColorRoutine());
 
-        PathfindingTest pathfinding = GetComponent<PathfindingTest>();
+        SlimePathfinding pathfinding = GetComponent<SlimePathfinding>();
         if (pathfinding != null)
         {
             pathfinding.StartEscape();
@@ -227,8 +229,8 @@ public class SlimeController : MonoBehaviour
     void StopMovement()
     {
         // PathfindingTest가 같은 GameObject에 붙어 있다면
-        PathfindingTest pathfinding =
-            GetComponent<PathfindingTest>();
+        SlimePathfinding pathfinding =
+            GetComponent<SlimePathfinding>();
 
         if (pathfinding != null)
         {
@@ -262,7 +264,7 @@ public class SlimeController : MonoBehaviour
             if (script == this)
                 continue;
 
-            if (script is PathfindingTest)
+            if (script is SlimePathfinding)
                 continue;
 
             script.enabled = false;
@@ -308,6 +310,17 @@ public class SlimeController : MonoBehaviour
         yield return new WaitForSeconds(
             dieAnimationLength
         );
+
+        if (itemPrefab != null)
+        {
+            Item item = Instantiate(itemPrefab, transform.position, Quaternion.identity).GetComponent<Item>();
+
+            // 가져온 스크립트에 색상 전달
+            if (item != null)
+            {
+                item.InitializeColor(myColorData.color);
+            }
+        }
 
         Destroy(gameObject);
     }
