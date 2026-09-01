@@ -92,7 +92,7 @@ PrefabInstance:
       addedObject: {fileID: 3466083059049243500}
     - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: d1186f2e7c053b04680c0963d9d7e921, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6527407983835731783}
+      addedObject: {fileID: 3319001915663806993}
     - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: d1186f2e7c053b04680c0963d9d7e921, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2623536518312182066}
@@ -142,7 +142,7 @@ MonoBehaviour:
   obstacleTilemap: {fileID: 0}
   gizmoLineWidth: 0.02
   path: []
---- !u!114 &6527407983835731783
+--- !u!114 &3319001915663806993
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -151,12 +151,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2377490880142568619}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0077a3aa265b03443a8e410c5268cf53, type: 3}
+  m_Script: {fileID: 11500000, guid: aaf666cda73c197419f20022f378e315, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PathfindingTest
+  m_EditorClassIdentifier: Assembly-CSharp::SlimePathfinding
   player: {fileID: 0}
   moveSpeed: 5
-  reachThreshold: 0.2
+  reachThreshold: 1
   dangerDistance: 1.5
   oppositeDirectionWeight: 0.7
   minimumFarDistanceRatio: 0.65
@@ -181,6 +181,7 @@ MonoBehaviour:
   flashColor2: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   moveThreshold: 0.001
   dieAnimationLength: 1
+  itemPrefab: {fileID: 6735341454333651489, guid: 68b1557451c9e4345a7d9766990bbbcd, type: 3}
 --- !u!95 &6892781986664667631
 Animator:
   serializedVersion: 7

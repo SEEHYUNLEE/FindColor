@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PathfindingTest : MonoBehaviour
+public class SlimePathfinding : MonoBehaviour
 {
     [Header("References")]
     public Transform player;
