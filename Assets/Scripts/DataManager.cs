@@ -19,7 +19,16 @@ public class PlayerData
 
 public class DataManager : MonoBehaviour
 {
-    public static DataManager Instance { get; private set; }
+    private static DataManager instance; // 실제 데이터
+    public static DataManager Instance // 외부로 연결
+    {
+        get
+        {
+            if (instance == null)
+                return null;
+            return instance;
+        }
+    }
 
     // 현재 게임에서 사용 중인 데이터
     public PlayerData currentData = new PlayerData();
@@ -29,12 +38,12 @@ public class DataManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        if (instance == null)
         {
-            Instance = this;
+            instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else if (Instance != this)
+        else if (instance != this)
         {
             Destroy(gameObject);
         }
@@ -107,5 +116,23 @@ public class DataManager : MonoBehaviour
     private void OnApplicationQuit()
     {
         SaveCurrentSlot();
+    }
+
+    public void DeleteSlot(int slotIndex)
+    {
+        string path = GetSavePath(slotIndex);
+
+        // 1. 세이브 파일 삭제
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+            Debug.Log($"[Delete] {slotIndex}번 슬롯 파일이 삭제되었습니다.");
+        }
+
+        // 2. 만약 현재 선택된 슬롯을 삭제한 것이라면 currentData 초기화
+        if (currentSlotIndex == slotIndex)
+        {
+            currentData = new PlayerData();
+        }
     }
 }
