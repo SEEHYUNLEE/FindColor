@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class AttackEffect : MonoBehaviour
 {
     private float maxLifetime = 5f; // 이벤트 미발생 대비 안전용 최대 수명
