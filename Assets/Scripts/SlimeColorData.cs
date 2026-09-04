@@ -63,6 +63,7 @@ public static class SlimeColorPalette
 
         for (int i = 0; i < HexColors.Length; i++)
         {
+            // HEX 문자열 Color로 변환
             if (ColorUtility.TryParseHtmlString(HexColors[i].hexCode, out Color parsedColor))
             {
                 Colors[i] = new SlimeColorData(HexColors[i].colorType, parsedColor);
