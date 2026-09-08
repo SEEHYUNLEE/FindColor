@@ -138,8 +138,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Grid
   player: {fileID: 0}
   floorTilemap: {fileID: 0}
-  wallTilemap: {fileID: 0}
-  obstacleTilemap: {fileID: 0}
+  wallBackTilemap: {fileID: 0}
+  wallFrontTilemap: {fileID: 0}
   gizmoLineWidth: 0.02
   path: []
 --- !u!114 &3319001915663806993

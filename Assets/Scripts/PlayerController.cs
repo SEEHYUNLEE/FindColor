@@ -33,6 +33,19 @@ public class PlayerController : MonoBehaviour
         {
             animator = GetComponent<Animator>();
         }
+
+        if (floorTilemap == null)
+        {
+            GameObject floorObj = GameObject.Find("Floor");
+            if (floorObj != null)
+            {
+                floorTilemap = floorObj.GetComponent<Tilemap>();
+            }
+            if (floorTilemap == null)
+            {
+                Debug.LogWarning("Floor Tilemap을 찾을 수 없습니다!");
+            }
+        }
     }
 
     void Update()

@@ -146,12 +146,18 @@ public class Item : MonoBehaviour
     {
         if (playerTransform != null)
         {
-            // 플레이어에게서 색상 관리 스크립트 검색 후 전달
+            // 플레이어 색상 관리 스크립트 검색 후 전달
             if (playerTransform.TryGetComponent<PlayerColorManager>(out var colorManager))
             {
-                // spriteRenderer는 Item의 SpriteRenderer
                 colorManager.ApplyColorToRandomPart(spriteRenderer.color);
+                GameManager.Instance.ClearCurrentStage();
             }
+        }
+
+        StageClearUI clearUI = FindFirstObjectByType<StageClearUI>();
+        if (clearUI != null)
+        {
+            clearUI.StartClearCountdown(3);
         }
 
         Destroy(gameObject);

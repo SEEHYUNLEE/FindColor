@@ -281,6 +281,9 @@ PrefabInstance:
       addedObject: {fileID: 7916835966042299795}
     - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 2619977b9a2e7e54cbebc75f889adfa6, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 7873142011559977229}
+    - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 2619977b9a2e7e54cbebc75f889adfa6, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 5081854901505510750}
     - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 2619977b9a2e7e54cbebc75f889adfa6, type: 3}
       insertIndex: -1
@@ -343,6 +346,26 @@ MonoBehaviour:
   attackEffectPrefab: {fileID: 1499892162123868803, guid: 0ddba4da2588625468d1d0eb9adfc233, type: 3}
   projectileSpeed: 3
   firePoint: {fileID: 7181873840299718825}
+--- !u!114 &7873142011559977229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398755475329367307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 698ca4eabf848924e9d1e30edd622fc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerColorManager
+  bodyParts:
+  - renderer: {fileID: 6065777516148995245}
+  - renderer: {fileID: 3812105146246387098}
+  - renderer: {fileID: 5194730794967986102}
+  - renderer: {fileID: 1251018905441357491}
+  - renderer: {fileID: 8056869716085159564}
+  - renderer: {fileID: 1926948076103822363}
+  - renderer: {fileID: 6771188845337442429}
 --- !u!50 &5081854901505510750
 Rigidbody2D:
   serializedVersion: 5
@@ -407,8 +430,43 @@ CapsuleCollider2D:
   m_Offset: {x: 0.017651588, y: 0.65175056}
   m_Size: {x: 0.33867764, y: 0.58577585}
   m_Direction: 0
+--- !u!212 &1251018905441357491 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 1383701516858184197, guid: 2619977b9a2e7e54cbebc75f889adfa6, type: 3}
+  m_PrefabInstance: {fileID: 175471207538302134}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1531417564246500712 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -7552582706839291426, guid: 2619977b9a2e7e54cbebc75f889adfa6, type: 3}
+  m_PrefabInstance: {fileID: 175471207538302134}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &1926948076103822363 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -7434735780147531603, guid: 2619977b9a2e7e54cbebc75f889adfa6, type: 3}
+  m_PrefabInstance: {fileID: 175471207538302134}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &3812105146246387098 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3929451477958215980, guid: 2619977b9a2e7e54cbebc75f889adfa6, type: 3}
+  m_PrefabInstance: {fileID: 175471207538302134}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &5194730794967986102 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 5366041157861667584, guid: 2619977b9a2e7e54cbebc75f889adfa6, type: 3}
+  m_PrefabInstance: {fileID: 175471207538302134}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6065777516148995245 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -3007667185037498341, guid: 2619977b9a2e7e54cbebc75f889adfa6, type: 3}
+  m_PrefabInstance: {fileID: 175471207538302134}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6771188845337442429 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 6888112981730518219, guid: 2619977b9a2e7e54cbebc75f889adfa6, type: 3}
+  m_PrefabInstance: {fileID: 175471207538302134}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &8056869716085159564 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -1323875273745454534, guid: 2619977b9a2e7e54cbebc75f889adfa6, type: 3}
   m_PrefabInstance: {fileID: 175471207538302134}
   m_PrefabAsset: {fileID: 0}
