@@ -8,7 +8,6 @@ public class PlayerData
 {
     public string playerName = "Player";
     public int stage = 1;
-    public int coin = 0;
 
     // HEX 색상 문자열 목록 저장
     public List<string> bodyPartHexColors = new List<string>();

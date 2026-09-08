@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class EscUI : MonoBehaviour
@@ -11,9 +10,6 @@ public class EscUI : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] private Button saveAndMainMenuButton;
     [SerializeField] private Button saveAndQuitButton;
-
-    [Header("Scene Settings")]
-    [SerializeField] private string mainMenuSceneName = "MainMenu"; // 메인메뉴 씬 이름
 
     private void Awake()
     {
@@ -49,33 +45,32 @@ public class EscUI : MonoBehaviour
         bool isActive = !escMenu.activeSelf;
         escMenu.SetActive(isActive);
 
-        // 시간 정지/재생 (선택 사항)
+        // 일시정지 / 시간 재생
         Time.timeScale = isActive ? 0f : 1f;
     }
 
-    // 저장 후 메인메뉴 이동
+    // 저장 후 메인 메뉴(슬롯 선택 화면)로 이동
     private void OnSaveAndMainMenuClicked()
     {
-        // 시간을 원래대로 복구
+        // 일시정지 해제
         Time.timeScale = 1f;
 
-        // 데이터 저장
-        if (DataManager.Instance != null)
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.LoadMainMenuScene();
+        }
+        else if (DataManager.Instance != null)
         {
             DataManager.Instance.SaveCurrentSlot();
         }
-
-        // 메인메뉴 씬 로드
-        SceneManager.LoadScene(mainMenuSceneName);
     }
 
     // 저장 후 게임 종료
     private void OnSaveAndQuitClicked()
     {
-        // 시간을 원래대로 복구
+        // 일시정지 해제
         Time.timeScale = 1f;
 
-        // DataManager의 QuitGame에서 저장을 이미 수행함
         if (DataManager.Instance != null)
         {
             DataManager.Instance.QuitGame();
