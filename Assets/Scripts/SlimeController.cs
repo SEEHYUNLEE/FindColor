@@ -35,18 +35,6 @@ public class SlimeController : MonoBehaviour
     // 외부(아이템 드롭 시스템 등)에서 슬라임 색상을 읽을 수 있는 프로퍼티
     public SlimeColorData MyColorData => myColorData;
 
-    // [추가] 무지개 색상 (빨주노초파남보) 정의
-    private readonly Color[] rainbowColors = new Color[]
-    {
-        new Color(1f, 0.2f, 0.2f),   // 빨강
-        new Color(1f, 0.5f, 0.1f),   // 주황
-        new Color(1f, 0.9f, 0.2f),   // 노랑
-        new Color(0.2f, 0.8f, 0.3f), // 초록
-        new Color(0.2f, 0.6f, 1f),   // 파랑
-        new Color(0.1f, 0.1f, 0.6f), // 남색
-        new Color(0.6f, 0.2f, 0.8f)  // 보라
-    };
-
     public GameObject itemPrefab;
 
     void Awake()
@@ -63,10 +51,11 @@ public class SlimeController : MonoBehaviour
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
-        // [수정] 생성 시 무지개 색상 중 하나를 랜덤으로 뽑아서 적용 및 originalColor 설정
+        // DataManager의 currentData를 전달하여 미적용 색상 중 무작위 1개 선택 및 적용
         if (spriteRenderer != null)
         {
-            myColorData = SlimeColorPalette.GetRandomColorData();
+            PlayerData currentPlayerData = DataManager.Instance != null ? DataManager.Instance.currentData : null;
+            myColorData = SlimeColorPalette.GetRandomColorData(currentPlayerData);
             spriteRenderer.color = myColorData.color;
         }
     }
