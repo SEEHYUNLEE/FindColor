@@ -18,8 +18,8 @@ public class PlayerData
 
 public class DataManager : MonoBehaviour
 {
-    private static DataManager instance; // 실제 데이터
-    public static DataManager Instance // 외부로 연결
+    private static DataManager instance;
+    public static DataManager Instance
     {
         get
         {
@@ -32,8 +32,11 @@ public class DataManager : MonoBehaviour
     // 현재 게임에서 사용 중인 데이터
     public PlayerData currentData = new PlayerData();
 
-    // 현재 선택해서 플레이 중인 슬롯 번호 (기본값 1)
-    public int currentSlotIndex { get; private set; } = 1;
+    // 현재 선택해서 플레이 중인 슬롯 번호 (기본값 -1 : 선택되지 않음)
+    public int currentSlotIndex { get; private set; } = -1;
+
+    // 실제로 슬롯이 선택/로드되었는지 여부
+    private bool isSlotLoaded = false;
 
     private void Awake()
     {
@@ -48,13 +51,11 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    // 영구 저장 경로(persistentDataPath) 반환
     public string GetSavePath(int slotIndex)
     {
         return Path.Combine(Application.persistentDataPath, $"SaveSlot_{slotIndex}.json");
     }
 
-    // 슬롯 지정
     public void SelectSlot(int slotIndex)
     {
         currentSlotIndex = Mathf.Clamp(slotIndex, 1, 3);
@@ -63,6 +64,13 @@ public class DataManager : MonoBehaviour
     // 현재 선택된 슬롯에 데이터 저장
     public void SaveCurrentSlot()
     {
+        // 슬롯이 정식으로 선택되지 않은 상태라면 저장하지 않음 (덮어쓰기 방지)
+        if (!isSlotLoaded || currentSlotIndex < 1)
+        {
+            Debug.LogWarning("[Save] 선택된 슬롯이 없어 저장을 건너뜁니다.");
+            return;
+        }
+
         string path = GetSavePath(currentSlotIndex);
         string json = JsonConvert.SerializeObject(currentData, Formatting.Indented);
 
@@ -70,11 +78,12 @@ public class DataManager : MonoBehaviour
         Debug.Log($"[Save] {currentSlotIndex}번 슬롯에 저장되었습니다: {path}");
     }
 
-    // 지정된 슬롯 데이터 불러오기 (슬롯 선택 + 불러오기 동시 수행)
+    // 지정된 슬롯 데이터 불러오기
     public bool LoadSlot(int slotIndex)
     {
         SelectSlot(slotIndex);
         string path = GetSavePath(slotIndex);
+        isSlotLoaded = true; // 슬롯 선택/로드 완료 플래그 활성화
 
         if (File.Exists(path))
         {
@@ -92,46 +101,47 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    // 특정 슬롯에 세이브 파일이 존재하는지 확인
     public bool HasSaveFile(int slotIndex)
     {
         return File.Exists(GetSavePath(slotIndex));
     }
 
-    // 게임 종료 및 저장 처리
     public void QuitGame()
     {
-        SaveCurrentSlot(); // 저장 후 종료
+        SaveCurrentSlot();
         Debug.Log("게임을 저장하고 종료합니다.");
 
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false; // 에디터 모드 종료
+        UnityEditor.EditorApplication.isPlaying = false;
 #else
-        Application.Quit(); // 빌드된 게임 종료
+        Application.Quit();
 #endif
     }
 
-    // 앱이 강제 종료되거나 모바일에서 백그라운드로 전환될 때 자동 저장
     private void OnApplicationQuit()
     {
-        SaveCurrentSlot();
+        // 슬롯이 로드된 상태일 때만 안전하게 저장
+        if (isSlotLoaded)
+        {
+            SaveCurrentSlot();
+        }
     }
 
     public void DeleteSlot(int slotIndex)
     {
         string path = GetSavePath(slotIndex);
 
-        // 1. 세이브 파일 삭제
         if (File.Exists(path))
         {
             File.Delete(path);
             Debug.Log($"[Delete] {slotIndex}번 슬롯 파일이 삭제되었습니다.");
         }
 
-        // 2. 만약 현재 선택된 슬롯을 삭제한 것이라면 currentData 초기화
         if (currentSlotIndex == slotIndex)
         {
             currentData = new PlayerData();
+            isSlotLoaded = false; // 현재 슬롯 삭제 시 로드 상태 해제
+            currentSlotIndex = -1;
         }
     }
 }
