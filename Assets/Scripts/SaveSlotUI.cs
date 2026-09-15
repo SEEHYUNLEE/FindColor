@@ -92,7 +92,7 @@ public class SaveSlotUI : MonoBehaviour
             {
                 instance.SetActive(true);
 
-                // 3. 해당 슬롯의 JSON 파일을 읽어와서 색상 적용
+                // 해당 슬롯의 JSON 파일을 읽어와서 색상 적용
                 string path = Path.Combine(Application.persistentDataPath, $"SaveSlot_{slotIndex}.json");
                 if (File.Exists(path))
                 {
@@ -100,10 +100,25 @@ public class SaveSlotUI : MonoBehaviour
                     PlayerData saveData = JsonConvert.DeserializeObject<PlayerData>(json);
 
                     PlayerUi uiColor = instance.GetComponent<PlayerUi>();
-                    if (saveData != null)
+                    if (uiColor != null && saveData != null)
                     {
                         uiColor.SetColorData(saveData);
                     }
+                }
+
+                // 3. 해당 슬롯 버튼에 Hover 감지 스크립트 연결
+                Button targetButton = GetSlotButton(slotIndex);
+                if (targetButton != null)
+                {
+                    // 버튼에 SlotButtonHover 컴포넌트가 없으면 추가
+                    SlotButtonHover hoverScript = targetButton.GetComponent<SlotButtonHover>();
+                    if (hoverScript == null)
+                    {
+                        hoverScript = targetButton.gameObject.AddComponent<SlotButtonHover>();
+                    }
+
+                    // 생성된 플레이어의 Animator 전달
+                    hoverScript.Setup(instance);
                 }
             }
         }
@@ -114,6 +129,18 @@ public class SaveSlotUI : MonoBehaviour
             {
                 instance.SetActive(false);
             }
+        }
+    }
+
+    // 슬롯 번호로 버튼 가져오는 헬퍼 함수
+    private Button GetSlotButton(int slotIndex)
+    {
+        switch (slotIndex)
+        {
+            case 1: return slot1Button;
+            case 2: return slot2Button;
+            case 3: return slot3Button;
+            default: return null;
         }
     }
 
