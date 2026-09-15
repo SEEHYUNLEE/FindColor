@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4d6d139a4ee2f4449605046251976a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlimeController
-  maxHP: 20
+  maxHP: 10
   animator: {fileID: 6892781986664667631}
   spriteRenderer: {fileID: 0}
   flashCount: 3
