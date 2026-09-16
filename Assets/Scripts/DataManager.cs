@@ -8,6 +8,12 @@ public class PlayerData
 {
     public string playerName = "Player";
     public int stage = 1;
+    public int gold = 0; // 캐릭터의 보유 골드
+
+    // 스탯별 강화 단계 (최대 7단계)
+    public int hpLevel = 0;
+    public int speedLevel = 0;
+    public int damageLevel = 0;
 
     // HEX 색상 문자열 목록 저장
     public List<string> bodyPartHexColors = new List<string>();
@@ -15,6 +21,8 @@ public class PlayerData
     // 이미 색상이 변경된 부위의 인덱스 목록
     public List<int> coloredParts = new List<int>();
 }
+
+public enum StatType { Hp, Speed, Damage }
 
 public class DataManager : MonoBehaviour
 {
@@ -144,4 +152,43 @@ public class DataManager : MonoBehaviour
             currentSlotIndex = -1;
         }
     }
+
+    const int UPGRADE_COST = 100;
+    const int MAX_LEVEL = 7;
+
+    public bool UpgradeStat(StatType statType)
+    {
+        if (currentData.gold < UPGRADE_COST)
+        {
+            return false;
+        }
+
+        switch (statType)
+        {
+            case StatType.Hp:
+                if (currentData.hpLevel >= MAX_LEVEL) return false;
+                currentData.hpLevel++;
+                break;
+
+            case StatType.Speed:
+                if (currentData.speedLevel >= MAX_LEVEL) return false;
+                currentData.speedLevel++;
+                break;
+
+            case StatType.Damage:
+                if (currentData.damageLevel >= MAX_LEVEL) return false;
+                currentData.damageLevel++;
+                break;
+        }
+
+        currentData.gold -= UPGRADE_COST;
+        SaveCurrentSlot(); // 강화 즉시 파일 저장
+        return true;
+    }
+    public void AddGold(int amount = 100)
+    {
+        currentData.gold += amount;
+        SaveCurrentSlot(); // 골드 획득 즉시 자동 저장
+    }
+
 }

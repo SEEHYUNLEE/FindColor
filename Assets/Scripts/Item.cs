@@ -144,6 +144,8 @@ public class Item : MonoBehaviour
     // 3. 아이템 획득 시 로직
     private void OnCollect()
     {
+        DataManager.Instance.AddGold(100);
+
         if (playerTransform != null)
         {
             // 플레이어 색상 관리 스크립트 검색 후 전달
