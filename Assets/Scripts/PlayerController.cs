@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
@@ -7,21 +8,27 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Tilemap floorTilemap;
     [SerializeField] private Animator animator;
 
-    // [추가] 공격 이펙트 관련 변수
-    [Header("Attack Settings")]
-    [SerializeField] private GameObject attackEffectPrefab; // 날아갈 이펙트 프리팹
-    [SerializeField] private float projectileSpeed = 3f;   // 이펙트가 날아가는 속도
-    [SerializeField] private Transform firePoint;           // (선택) 발사 위치. 비워두면 플레이어 몸 중앙(transform.position)에서 발사
+    [SerializeField] private GameObject attackEffectPrefab;
+    [SerializeField] private float projectileSpeed = 3f;
+    [SerializeField] private Transform firePoint;
 
-    private float walkSpeed = 2f;
-    private float runSpeed = 4f;
+    [SerializeField] private float baseWalkSpeed = 2f;
+    [SerializeField] private float baseRunSpeed = 4f;
+    [SerializeField] private float speedPerLevel = 1f;
+
+    [SerializeField] private float baseMaxHp = 100f;
+    [SerializeField] private float hpPerLevel = 100f;
+
+    private float currentWalkSpeed;
+    private float currentRunSpeed;
+
+    public float MaxHp { get; private set; }
+    public float CurrentHp { get; private set; }
 
     private Rigidbody2D rb;
     private Vector2 movement;
     private bool isFacingRight = true;
     private bool isAttacking = false;
-
-    // [추가] 마우스 클릭 방향을 저장할 변수
     private Vector2 attackDirection;
 
     void Start()
@@ -30,27 +37,75 @@ public class PlayerController : MonoBehaviour
         rb.freezeRotation = true;
 
         if (animator == null)
-        {
             animator = GetComponent<Animator>();
-        }
 
         if (floorTilemap == null)
         {
             GameObject floorObj = GameObject.Find("Floor");
             if (floorObj != null)
-            {
                 floorTilemap = floorObj.GetComponent<Tilemap>();
-            }
+
             if (floorTilemap == null)
-            {
                 Debug.LogWarning("Floor Tilemap을 찾을 수 없습니다!");
+        }
+
+        // 게임 시작 시 저장 데이터 기반 스탯 적용
+        ApplyUpgradeStats();
+    }
+
+    // 강화 단계 데이터를 읽어와서 이동 속도 재계산
+    public void ApplyUpgradeStats()
+    {
+        if (DataManager.Instance != null && DataManager.Instance.currentData != null)
+        {
+            var data = DataManager.Instance.currentData;
+
+            if (data.speedLevel >= 7)
+            {
+                // [Speed 만렙 특수효과]
+                currentWalkSpeed = 30f;
+                currentRunSpeed = 60f;
             }
+            else
+            {
+                float additionalSpeed = data.speedLevel * speedPerLevel;
+                currentWalkSpeed = baseWalkSpeed + additionalSpeed;
+                currentRunSpeed = currentWalkSpeed * 2;
+            }
+
+            if (data.hpLevel >= 7)
+            {
+                // [HP 만렙 특수효과]
+                MaxHp = 10000f;
+                CurrentHp = MaxHp;
+
+                float scaleX = Mathf.Abs(transform.localScale.x) * 2f;
+                float scaleY = Mathf.Abs(transform.localScale.y) * 2f;
+
+                transform.localScale = new Vector3(
+                    isFacingRight ? scaleX : -scaleX,
+                    scaleY,
+                    transform.localScale.z
+                );
+            }
+            else
+            {
+                MaxHp = baseMaxHp + (data.hpLevel * hpPerLevel);
+                CurrentHp = MaxHp;
+            }
+            
+        }
+        else
+        {
+            currentWalkSpeed = baseWalkSpeed;
+            currentRunSpeed = baseRunSpeed;
+            MaxHp = baseMaxHp;
+            CurrentHp = MaxHp;
         }
     }
 
     void Update()
     {
-        // 공격 중인 상태라면 이동 및 추가 공격 입력을 완전히 차단
         if (isAttacking)
         {
             if (animator != null)
@@ -79,16 +134,14 @@ public class PlayerController : MonoBehaviour
                               (Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed);
 
         bool isMoving = movement.sqrMagnitude > 0.01f;
-        float currentSpeed = isShiftPressed ? runSpeed : walkSpeed;
+
+        // 강화 데이터가 계산된 속도 변수 사용
+        float moveSpeed = isShiftPressed ? currentRunSpeed : currentWalkSpeed;
 
         if (moveX > 0f && !isFacingRight)
-        {
             Flip();
-        }
         else if (moveX < 0f && isFacingRight)
-        {
             Flip();
-        }
 
         if (animator != null)
         {
@@ -99,31 +152,31 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("IsRunning", isRunning);
         }
 
-        // [수정] 마우스 왼쪽 클릭 시 공격 시작 및 방향 계산
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
             if (animator != null && !isAttacking)
             {
                 isAttacking = true;
                 movement = Vector2.zero;
                 animator.SetTrigger("Attack");
 
-                // 1. 마우스의 화면 좌표를 월드 좌표로 변환
                 Vector2 mouseScreenPosition = Mouse.current.position.ReadValue();
                 Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
-                mouseWorldPosition.z = 0f; // 2D이므로 z축은 0으로 맞춤
+                mouseWorldPosition.z = 0f;
 
-                // 2. 발사 기준 위치 설정 (firePoint가 없으면 transform.position 사용)
                 Vector3 originPosition = firePoint != null ? firePoint.position : transform.position;
-
-                // 3. 공격 방향 계산 (마우스 위치 - firePoint 위치)
                 attackDirection = (mouseWorldPosition - originPosition).normalized;
             }
         }
 
         if (floorTilemap == null) return;
 
-        Vector2 nextPosition = rb.position + movement * currentSpeed * Time.fixedDeltaTime;
+        // 강화 스탯이 반영된 moveSpeed 적용
+        Vector2 nextPosition = rb.position + movement * moveSpeed * Time.fixedDeltaTime;
         Vector3Int cellPos = floorTilemap.WorldToCell(nextPosition);
 
         if (floorTilemap.HasTile(cellPos))
@@ -132,7 +185,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // [추가] 애니메이션 이벤트에서 호출할 프리팹 발사 함수
     public void SpawnAttackEffect()
     {
         if (attackEffectPrefab == null)
@@ -141,17 +193,12 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // 1. 발사 위치 설정 (firePoint가 지정되어 있으면 그 위치, 없으면 플레이어 중심)
         Vector3 spawnPosition = firePoint != null ? firePoint.position : transform.position;
-
-        // 2. 이펙트 생성
         GameObject effect = Instantiate(attackEffectPrefab, spawnPosition, Quaternion.identity);
 
-        // 3. 이펙트가 날아가는 방향을 바라보도록 회전 (이미지가 돌아가야 자연스러움)
         float angle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
         effect.transform.rotation = Quaternion.Euler(0, 0, angle);
 
-        // 4. Rigidbody2D를 이용해 이펙트 날려보내기
         Rigidbody2D effectRb = effect.GetComponent<Rigidbody2D>();
         if (effectRb != null)
         {
