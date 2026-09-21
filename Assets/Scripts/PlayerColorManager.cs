@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PlayerColorManager : MonoBehaviour
 {
+
     [System.Serializable]
     public struct BodyPart
     {

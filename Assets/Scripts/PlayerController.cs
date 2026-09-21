@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
-
+using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Tilemap floorTilemap;
@@ -30,6 +30,9 @@ public class PlayerController : MonoBehaviour
     private bool isFacingRight = true;
     private bool isAttacking = false;
     private Vector2 attackDirection;
+
+    private bool isKnockback;
+    private Coroutine knockbackCoroutine;
 
     void Start()
     {
@@ -106,6 +109,16 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (isKnockback)
+        {
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", false);
+                animator.SetBool("IsRunning", false);
+            }
+
+            return;
+        }
         if (isAttacking)
         {
             if (animator != null)
@@ -217,5 +230,86 @@ public class PlayerController : MonoBehaviour
         Vector3 currentScale = transform.localScale;
         currentScale.x *= -1;
         transform.localScale = currentScale;
+    }
+    public void TakeDamage(float damage)
+    {
+        CurrentHp -= damage;
+        CurrentHp = Mathf.Max(CurrentHp, 0f);
+
+        Debug.Log("플레이어 HP : " + CurrentHp);
+
+        // 공격 중 피격 됐을 때 설정
+        isAttacking = false;
+
+        animator.SetTrigger("Hit");
+
+        if (CurrentHp <= 0f)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log("플레이어 사망");
+
+        // 사망 처리
+    }
+    public void KnockBack(Vector2 direction, float force)
+    {
+        if (knockbackCoroutine != null)
+        {
+            StopCoroutine(knockbackCoroutine);
+        }
+
+        knockbackCoroutine = StartCoroutine(KnockBackCoroutine(direction, force));
+    }
+
+    private IEnumerator KnockBackCoroutine(Vector2 direction, float force)
+    {
+        isKnockback = true;
+
+        rb.linearVelocity = Vector2.zero;
+
+        rb.AddForce(
+            direction.normalized * force,
+            ForceMode2D.Impulse
+        );
+
+        float knockbackTime = 0.25f;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < knockbackTime)
+        {
+            elapsedTime += Time.deltaTime;
+
+            Vector2 currentPosition = rb.position;
+            Vector2 velocity = rb.linearVelocity;
+
+            Vector2 nextPosition =
+                currentPosition + velocity * Time.fixedDeltaTime;
+
+            Vector3Int cellPos =
+                floorTilemap.WorldToCell(nextPosition);
+
+            // 다음 위치가 Floor라면 정상적으로 이동
+            if (floorTilemap != null &&
+                floorTilemap.HasTile(cellPos))
+            {
+                rb.MovePosition(nextPosition);
+            }
+            else
+            {
+                // Floor 밖으로 나가려는 방향의 속도 제거
+                rb.linearVelocity = Vector2.zero;
+            }
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        rb.linearVelocity = Vector2.zero;
+
+        isKnockback = false;
+        knockbackCoroutine = null;
     }
 }

@@ -45,6 +45,15 @@ public class AttackEffect : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+
+        if (collision.TryGetComponent<Boss>(out Boss boss))
+        {
+            if (!boss.IsDead())
+            {
+                boss.TakeDamage(finalDamage);
+                Destroy(gameObject);
+            }
+        }
     }
 
     // [애니메이션 이벤트용 함수]
