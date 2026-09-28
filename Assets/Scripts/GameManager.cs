@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string mainMenuSceneName = "MainMenu"; // 슬롯 선택/타이틀 화면
     [SerializeField] private string mainSceneName = "Main";         // 마을 / 메인 로비
     [SerializeField] private string normalStageSceneName = "NormalStage"; // 노말 스테이지
+    [SerializeField] private string bossStageSceneName = "BossStage"; // 노말 스테이지
 
     private void Awake()
     {
@@ -48,7 +49,6 @@ public class GameManager : MonoBehaviour
 
         DataManager.Instance.currentData.stage++;
         DataManager.Instance.SaveCurrentSlot();
-        Debug.Log($"[GameManager] 스테이지 클리어! 다음 스테이지: {DataManager.Instance.currentData.stage}");
     }
 
     // =========================================================
@@ -75,11 +75,10 @@ public class GameManager : MonoBehaviour
         SaveCurrentData();
         SceneManager.LoadScene(normalStageSceneName);
     }
-
-    // 현재 진행 중인 스테이지 재시작
-    public void RestartStage()
+    public void LoadBossStage()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SaveCurrentData();
+        SceneManager.LoadScene(bossStageSceneName);
     }
 
     // 씬 전환 시 헬퍼 메서드 (자동 저장)
