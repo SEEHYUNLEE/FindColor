@@ -1,8 +1,10 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
-using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Tilemap floorTilemap;
@@ -18,6 +20,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float baseMaxHp = 100f;
     [SerializeField] private float hpPerLevel = 100f;
+    [SerializeField] private TMP_Text hpText;
 
     private float currentWalkSpeed;
     private float currentRunSpeed;
@@ -52,8 +55,10 @@ public class PlayerController : MonoBehaviour
                 Debug.LogWarning("Floor Tilemap을 찾을 수 없습니다!");
         }
 
+        hpText = GameObject.Find("PlayerHpText").GetComponent<TMP_Text>();
         // 게임 시작 시 저장 데이터 기반 스탯 적용
         ApplyUpgradeStats();
+        hpText.text = $"{CurrentHp:0}";
     }
 
     // 강화 단계 데이터를 읽어와서 이동 속도 재계산
@@ -81,7 +86,7 @@ public class PlayerController : MonoBehaviour
                 // [HP 만렙 특수효과]
                 MaxHp = 10000f;
                 CurrentHp = MaxHp;
-
+                hpText.text = $"{CurrentHp:0}";
                 float scaleX = Mathf.Abs(transform.localScale.x) * 2f;
                 float scaleY = Mathf.Abs(transform.localScale.y) * 2f;
 
@@ -95,6 +100,7 @@ public class PlayerController : MonoBehaviour
             {
                 MaxHp = baseMaxHp + (data.hpLevel * hpPerLevel);
                 CurrentHp = MaxHp;
+                hpText.text = $"{CurrentHp:0}";
             }
             
         }
@@ -236,7 +242,7 @@ public class PlayerController : MonoBehaviour
         CurrentHp -= damage;
         CurrentHp = Mathf.Max(CurrentHp, 0f);
 
-        Debug.Log("플레이어 HP : " + CurrentHp);
+        hpText.text = $"{CurrentHp:0}";
 
         // 공격 중 피격 됐을 때 설정
         isAttacking = false;
@@ -251,9 +257,7 @@ public class PlayerController : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log("플레이어 사망");
-
-        // 사망 처리
+        SceneManager.LoadScene("Main");
     }
     public void KnockBack(Vector2 direction, float force)
     {

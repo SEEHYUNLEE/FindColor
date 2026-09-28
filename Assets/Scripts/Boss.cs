@@ -1,9 +1,10 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Boss : MonoBehaviour
 {
-    private int maxHp = 1000;
+    private int maxHp = 500;
     private int currentHp;
 
     private bool isDead;
@@ -20,9 +21,11 @@ public class Boss : MonoBehaviour
     private float flashInterval = 0.05f;
     private Color flashColor1 = Color.black;
     private Color flashColor2 = Color.gray;
+    private Color originalColor = Color.white;
 
     private Coroutine flashCoroutine;
 
+    [SerializeField] private Slider hpBar;
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -31,6 +34,8 @@ public class Boss : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
         currentHp = maxHp;
+        hpBar.maxValue = maxHp;
+        hpBar.value = currentHp;
 
         StartCoroutine(MissileStart());
         StartCoroutine(JumpMove());
@@ -175,7 +180,7 @@ public class Boss : MonoBehaviour
 
         currentHp -= damage;
         currentHp = Mathf.Max(currentHp, 0);
-
+        hpBar.value = currentHp;
         // 중복 피격 제어
         if (flashCoroutine != null)
         {
@@ -201,6 +206,9 @@ public class Boss : MonoBehaviour
 
         StopAllCoroutines();
 
+        hpBar.gameObject.SetActive(false);
+        GameManager.Instance.ClearCurrentStage();
+
         animator.SetTrigger("Die");
     }
 
@@ -208,8 +216,6 @@ public class Boss : MonoBehaviour
     {
         if (spriteRenderer == null)
             yield break;
-
-        Color originalColor = spriteRenderer.color;
 
         for (int i = 0; i < flashCount; i++)
         {

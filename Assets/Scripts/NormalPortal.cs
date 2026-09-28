@@ -1,12 +1,25 @@
 using UnityEngine;
 using System.Collections;
 
-public class Portal : MonoBehaviour
+public class NormalPortal : MonoBehaviour
 {
     [SerializeField] private GameObject ConvertImage;
     private float transitionTime = 3f;
 
     private bool isLoading = false;
+
+    private void Start()
+    {
+        // Stage가 8일 때만 활성화
+        if (GameManager.Instance.GetCurrentStage() == 8)
+        {
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            gameObject.SetActive(true);
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

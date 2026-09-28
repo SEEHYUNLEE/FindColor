@@ -117,7 +117,6 @@ public class DataManager : MonoBehaviour
     public void QuitGame()
     {
         SaveCurrentSlot();
-        Debug.Log("게임을 저장하고 종료합니다.");
 
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
@@ -142,7 +141,6 @@ public class DataManager : MonoBehaviour
         if (File.Exists(path))
         {
             File.Delete(path);
-            Debug.Log($"[Delete] {slotIndex}번 슬롯 파일이 삭제되었습니다.");
         }
 
         if (currentSlotIndex == slotIndex)
