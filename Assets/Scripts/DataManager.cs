@@ -189,4 +189,13 @@ public class DataManager : MonoBehaviour
         SaveCurrentSlot(); // °ñµå È¹µæ Áï½Ã ÀÚµ¿ ÀúÀå
     }
 
+    public void SetPlayerName(string newName)
+    {
+        if (string.IsNullOrWhiteSpace(newName))
+            return;
+
+        currentData.playerName = newName.Trim();
+
+        SaveCurrentSlot();
+    }
 }

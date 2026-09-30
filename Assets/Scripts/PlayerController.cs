@@ -37,6 +37,8 @@ public class PlayerController : MonoBehaviour
     private bool isKnockback;
     private Coroutine knockbackCoroutine;
 
+    private PlayerNameUI nameUI;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -59,6 +61,8 @@ public class PlayerController : MonoBehaviour
         // 게임 시작 시 저장 데이터 기반 스탯 적용
         ApplyUpgradeStats();
         hpText.text = $"{CurrentHp:0}";
+
+        nameUI = FindFirstObjectByType<PlayerNameUI>();
     }
 
     // 강화 단계 데이터를 읽어와서 이동 속도 재계산
@@ -115,6 +119,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (nameUI != null && nameUI.IsPanelOpen())
+        {
+            return;
+        }
+
         if (isKnockback)
         {
             if (animator != null)
