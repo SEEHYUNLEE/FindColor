@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class Boss : MonoBehaviour
 {
-    private int maxHp = 500;
+    private int maxHp = 20;
     private int currentHp;
 
     private bool isDead;
@@ -205,11 +205,19 @@ public class Boss : MonoBehaviour
         isDead = true;
 
         StopAllCoroutines();
-
+        spriteRenderer.color = originalColor;
         hpBar.gameObject.SetActive(false);
         GameManager.Instance.ClearCurrentStage();
 
         animator.SetTrigger("Die");
+
+        StartCoroutine(LoadMainMenuSceneAfterDelay());
+    }
+    private IEnumerator LoadMainMenuSceneAfterDelay()
+    {
+        yield return new WaitForSeconds(3f);
+
+        GameManager.Instance.LoadMainMenuScene();
     }
 
     private IEnumerator FlashColorRoutine()

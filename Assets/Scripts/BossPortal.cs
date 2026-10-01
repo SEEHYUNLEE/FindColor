@@ -4,12 +4,6 @@ public class BossPortal : MonoBehaviour
 {
     private void Start()
     {
-        if (GameManager.Instance == null)
-        {
-            gameObject.SetActive(false);
-            return;
-        }
-
         // Stage가 8일 때만 활성화
         if (GameManager.Instance.GetCurrentStage() == 8)
         {

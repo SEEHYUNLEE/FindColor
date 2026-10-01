@@ -64,6 +64,25 @@ public class DataManager : MonoBehaviour
         return Path.Combine(Application.persistentDataPath, $"SaveSlot_{slotIndex}.json");
     }
 
+    public int GetSlotStage(int slotIndex)
+    {
+        if (slotIndex < 1 || slotIndex > 3)
+            return 0;
+
+        string path = GetSavePath(slotIndex);
+
+        if (!File.Exists(path))
+            return 0;
+
+        string json = File.ReadAllText(path);
+        PlayerData data = JsonConvert.DeserializeObject<PlayerData>(json);
+        if (data == null)
+            return 0;
+
+        return data.stage;
+
+    }
+
     public void SelectSlot(int slotIndex)
     {
         currentSlotIndex = Mathf.Clamp(slotIndex, 1, 3);

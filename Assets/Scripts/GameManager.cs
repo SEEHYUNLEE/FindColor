@@ -14,10 +14,10 @@ public class GameManager : MonoBehaviour
     }
 
     [Header("Scene Settings")]
-    [SerializeField] private string mainMenuSceneName = "MainMenu"; // 슬롯 선택/타이틀 화면
-    [SerializeField] private string mainSceneName = "Main";         // 마을 / 메인 로비
-    [SerializeField] private string normalStageSceneName = "NormalStage"; // 노말 스테이지
-    [SerializeField] private string bossStageSceneName = "BossStage"; // 노말 스테이지
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
+    [SerializeField] private string mainSceneName = "Main";
+    [SerializeField] private string normalStageSceneName = "NormalStage";
+    [SerializeField] private string bossStageSceneName = "BossCutscene";
 
     private void Awake()
     {

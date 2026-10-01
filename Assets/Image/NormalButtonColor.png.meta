@@ -1,0 +1,236 @@
+fileFormatVersion: 2
+guid: a0c4460111ac2f14b87d3e78bb04a7af
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -857014642452374593
+    second: NormalButtonColor_0
+  - first:
+      213: 5473278747868086011
+    second: NormalButtonColor_1
+  - first:
+      213: -1511486000455888717
+    second: NormalButtonColor_2
+  - first:
+      213: 5971656038917153838
+    second: NormalButtonColor_3
+  - first:
+      213: -8162149777589042935
+    second: NormalButtonColor_4
+  - first:
+      213: -349109228172098834
+    second: NormalButtonColor_5
+  - first:
+      213: -2101606023321697622
+    second: NormalButtonColor_6
+  - first:
+      213: 9040828135595252909
+    second: NormalButtonColor_7
+  - first:
+      213: -420486906023812160
+    second: NormalButtonColor_8
+  - first:
+      213: 6293934926448791910
+    second: NormalButtonColor_9
+  - first:
+      213: 6681189936126924831
+    second: NormalButtonColor_10
+  - first:
+      213: 3186764355468321119
+    second: NormalButtonColor_11
+  - first:
+      213: -3714840639673787515
+    second: NormalButtonColor_12
+  - first:
+      213: -6132388172085813622
+    second: NormalButtonColor_13
+  - first:
+      213: 3993547134496877127
+    second: NormalButtonColor_14
+  - first:
+      213: 7820415461356455321
+    second: NormalButtonColor_15
+  - first:
+      213: -6278519652958139396
+    second: NormalButtonColor_16
+  - first:
+      213: -3453621541932865156
+    second: NormalButtonColor_17
+  - first:
+      213: -5414738416150983982
+    second: NormalButtonColor_18
+  - first:
+      213: -5123429736135787436
+    second: NormalButtonColor_19
+  - first:
+      213: -2392013772249115318
+    second: NormalButtonColor_20
+  - first:
+      213: 5629110649092055373
+    second: NormalButtonColor_21
+  - first:
+      213: -8787839875109631258
+    second: NormalButtonColor_22
+  - first:
+      213: 4617175297321091498
+    second: NormalButtonColor_23
+  - first:
+      213: 9009107692987692898
+    second: NormalButtonColor_24
+  - first:
+      213: 1237740715809916230
+    second: NormalButtonColor_25
+  - first:
+      213: -4926196144641581756
+    second: NormalButtonColor_26
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: NormalButtonColor_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 38
+        width: 2172
+        height: 630
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbb515d29b54b14f0800000000000000
+      internalID: -857014642452374593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 571a25240c3499347856dfaeeca24846
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":2172.0,"y":724.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      NormalButtonColor_0: -857014642452374593
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
