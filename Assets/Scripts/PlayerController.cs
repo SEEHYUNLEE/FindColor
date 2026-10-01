@@ -58,8 +58,10 @@ public class PlayerController : MonoBehaviour
         }
 
         hpText = GameObject.Find("PlayerHpText").GetComponent<TMP_Text>();
+
         // 게임 시작 시 저장 데이터 기반 스탯 적용
         ApplyUpgradeStats();
+
         hpText.text = $"{CurrentHp:0}";
 
         nameUI = FindFirstObjectByType<PlayerNameUI>();
@@ -119,6 +121,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (SceneManager.GetActiveScene().name == "BossCutscene")
+        {
+            return;
+        }
+
         if (nameUI != null && nameUI.IsPanelOpen())
         {
             return;

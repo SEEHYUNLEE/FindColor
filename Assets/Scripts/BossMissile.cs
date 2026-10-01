@@ -5,7 +5,7 @@ public class BossMissile : MonoBehaviour
     private Vector2 direction;
     private float speed;
 
-    private float lifeTime = 3f;
+    private float lifeTime = 1f;
     private float curveSpeed = 60f;
 
     private float timer;

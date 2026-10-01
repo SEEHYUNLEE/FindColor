@@ -9,13 +9,13 @@ public class PlayerNameUI : MonoBehaviour
     [SerializeField] private TMP_Text storyText;
 
     private string story =
-        "{0}님,\n\n" +
-        "색을 잃어버린 세계에 오신 것을 환영합니다.\n\n" +
-        "모든 것이 흑백으로 변해버린 이곳에서\n" +
-        "당신은 수상한 포탈 하나를 발견했다.\n\n" +
-        "포탈 너머에는 무엇이 기다리고 있을까?\n\n" +
-        "당신은 사라진 색을 되찾기 위한\n" +
-        "모험을 시작한다.";
+        "{0}님 맞죠?\n\n" +
+        "지금 세계는 모든 색을 잃어버렸어요.\n\n" +
+        "흑백으로 변해버린 이곳에서\n" +
+        "수상한 포탈 하나가 등장했어요.\n\n" +
+        "포탈 너머에는 무엇이 있을까요?\n\n" +
+        "{0}님이 사라진 색을 되찾기 위한\n" +
+        "모험을 시작해주세요.";
 
     private float textSpeed = 0.05f;
 

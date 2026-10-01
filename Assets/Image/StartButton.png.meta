@@ -1,0 +1,248 @@
+fileFormatVersion: 2
+guid: 9c2aa8ac31053eb429388704eb60f924
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4019097937451829302
+    second: MainMenuButton_0
+  - first:
+      213: 1678278478358739047
+    second: MainMenuButton_1
+  - first:
+      213: -4759216707479714203
+    second: MainMenuButton_2
+  - first:
+      213: 4614342308545453378
+    second: MainMenuButton_3
+  - first:
+      213: -4780821099455803201
+    second: MainMenuButton_4
+  - first:
+      213: 9217868632306854946
+    second: MainMenuButton_5
+  - first:
+      213: 7426937065527496279
+    second: MainMenuButton_6
+  - first:
+      213: -4372842912366380371
+    second: MainMenuButton_7
+  - first:
+      213: -218437071561231377
+    second: MainMenuButton_8
+  - first:
+      213: -3699091204915407528
+    second: MainMenuButton_9
+  - first:
+      213: 8058391746528457943
+    second: MainMenuButton_10
+  - first:
+      213: -2764112680613929826
+    second: MainMenuButton_11
+  - first:
+      213: 3152621957920454724
+    second: MainMenuButton_12
+  - first:
+      213: -7338495514686966746
+    second: MainMenuButton_13
+  - first:
+      213: 2298890221459843665
+    second: MainMenuButton_14
+  - first:
+      213: -4384395065456277462
+    second: MainMenuButton_15
+  - first:
+      213: -5281663261872319763
+    second: MainMenuButton_16
+  - first:
+      213: -4113180127130797306
+    second: MainMenuButton_17
+  - first:
+      213: -5131361785307325825
+    second: MainMenuButton_18
+  - first:
+      213: -2479866575129896077
+    second: MainMenuButton_19
+  - first:
+      213: -2444546777298905726
+    second: MainMenuButton_20
+  - first:
+      213: -140891745852246342
+    second: MainMenuButton_21
+  - first:
+      213: 3417832871583616619
+    second: MainMenuButton_22
+  - first:
+      213: 4461503446076292044
+    second: MainMenuButton_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: StartButton_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 2172
+        height: 712
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac7bda058bb4938c0800000000000000
+      internalID: -4019097937451829302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 76ab30a8277be744a9017014d7ebec70
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      MainMenuButton_1: 1678278478358739047
+      MainMenuButton_10: 8058391746528457943
+      MainMenuButton_11: -2764112680613929826
+      MainMenuButton_12: 3152621957920454724
+      MainMenuButton_13: -7338495514686966746
+      MainMenuButton_14: 2298890221459843665
+      MainMenuButton_15: -4384395065456277462
+      MainMenuButton_16: -5281663261872319763
+      MainMenuButton_17: -4113180127130797306
+      MainMenuButton_18: -5131361785307325825
+      MainMenuButton_19: -2479866575129896077
+      MainMenuButton_2: -4759216707479714203
+      MainMenuButton_20: -2444546777298905726
+      MainMenuButton_21: -140891745852246342
+      MainMenuButton_22: 3417832871583616619
+      MainMenuButton_23: 4461503446076292044
+      MainMenuButton_3: 4614342308545453378
+      MainMenuButton_4: -4780821099455803201
+      MainMenuButton_5: 9217868632306854946
+      MainMenuButton_6: 7426937065527496279
+      MainMenuButton_7: -4372842912366380371
+      MainMenuButton_8: -218437071561231377
+      MainMenuButton_9: -3699091204915407528
+      StartButton_0: -4019097937451829302
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
