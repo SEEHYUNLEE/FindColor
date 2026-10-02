@@ -20,6 +20,9 @@ public class PlayerData
 
     // 이미 색상이 변경된 부위의 인덱스 목록
     public List<int> coloredParts = new List<int>();
+
+    public int inventoryCapacity = 20;
+    public List<InventoryItemData> inventoryItems = new List<InventoryItemData>();
 }
 
 public enum StatType { Hp, Speed, Damage }

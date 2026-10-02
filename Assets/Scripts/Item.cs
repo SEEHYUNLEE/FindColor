@@ -8,6 +8,9 @@ public class Item : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Light2D itemLight;
 
+    [Header("Item Data")]
+    [SerializeField] private SlimeColorType colorType;
+
     [Header("Jump Settings")]
     [SerializeField] private float jumpDuration = 0.5f;
     [SerializeField] private float jumpHeight = 1.2f;
@@ -146,22 +149,52 @@ public class Item : MonoBehaviour
     {
         DataManager.Instance.AddGold(100);
 
-        if (playerTransform != null)
+        if (GameManager.Instance.GetCurrentStage() <= 7)
         {
-            // 플레이어 색상 관리 스크립트 검색 후 전달
-            if (playerTransform.TryGetComponent<PlayerColorManager>(out var colorManager))
-            {
-                colorManager.ApplyColorToRandomPart(spriteRenderer.color);
-                GameManager.Instance.ClearCurrentStage();
-            }
+            CollectForPlayerColor();
+        }
+        else
+        {
+            CollectForInventory();
         }
 
-        StageClearUI clearUI = FindFirstObjectByType<StageClearUI>();
+        if (GameManager.Instance != null)
+            GameManager.Instance.ClearCurrentStage();
+
+        StageClearUI clearUI =
+            FindFirstObjectByType<StageClearUI>();
+
         if (clearUI != null)
-        {
             clearUI.StartClearCountdown(3);
-        }
 
         Destroy(gameObject);
+    }
+
+    private void CollectForPlayerColor()
+    {
+        if (playerTransform == null)
+            return;
+
+        if (playerTransform.TryGetComponent<
+            PlayerColorManager>(
+                out var colorManager))
+        {
+            colorManager.ApplyColorToRandomPart(
+                spriteRenderer.color);
+        }
+    }
+
+    private void CollectForInventory()
+    {
+        if (InventoryManager.Instance == null)
+        {
+            Debug.LogWarning(
+                "InventoryManager가 존재하지 않습니다.");
+            return;
+        }
+
+        InventoryManager.Instance.AddItem(
+            colorType,
+            1);
     }
 }
