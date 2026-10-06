@@ -304,10 +304,9 @@ public class SlimeController : MonoBehaviour
         {
             Item item = Instantiate(itemPrefab, transform.position, Quaternion.identity).GetComponent<Item>();
 
-            // 가져온 스크립트에 색상 전달
             if (item != null)
             {
-                item.InitializeColor(myColorData.color);
+                item.InitializeColor(myColorData);
             }
         }
 
