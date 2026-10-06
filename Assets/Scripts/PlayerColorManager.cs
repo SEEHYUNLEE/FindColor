@@ -61,6 +61,52 @@ public class PlayerColorManager : MonoBehaviour
             SaveColorData(DataManager.Instance.currentData);
         }
     }
+    public bool ApplyColorToPart(
+        int partIndex,
+        Color newColor)
+    {
+        if (partIndex < 0 ||
+            partIndex >= bodyParts.Count)
+        {
+            Debug.LogWarning(
+                $"잘못된 Body Part Index: {partIndex}"
+            );
+
+            return false;
+        }
+
+        if (bodyParts[partIndex].renderer == null)
+        {
+            Debug.LogWarning(
+                $"Body Part [{partIndex}]의 SpriteRenderer가 없습니다."
+            );
+
+            return false;
+        }
+
+        // 기존 색상과 상관없이 새 색상 적용
+        bodyParts[partIndex].renderer.color =
+            newColor;
+
+        // 색칠된 부위로 기록
+        if (!coloredParts.Contains(partIndex))
+        {
+            coloredParts.Add(partIndex);
+        }
+
+        // 저장
+        if (DataManager.Instance != null)
+        {
+            SaveColorData(
+                DataManager.Instance.currentData
+            );
+
+            DataManager.Instance.SaveCurrentSlot();
+        }
+
+        return true;
+    }
+
 
     // --- JSON 저장 시 호출 ---
     public void SaveColorData(PlayerData data)

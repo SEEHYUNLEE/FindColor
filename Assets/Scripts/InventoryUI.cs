@@ -5,31 +5,30 @@ public class InventoryUI : MonoBehaviour
 {
     [Header("Slot Options")]
     [SerializeField] private int horizontalSlotCount = 5;
-
-    [SerializeField] private float slotMargin = 0f;
-
+    [SerializeField] private float slotMargin = 10f;
     [SerializeField] private float contentAreaPadding = 10f;
-
     [SerializeField] private float slotSize = 100f;
 
     [Header("Connected Objects")]
     [SerializeField] private RectTransform contentArea;
     [SerializeField] private ItemSlotUI itemSlotPrefab;
+    [SerializeField] private BodyPartSelectionPopup bodyPartPopup;
 
     private readonly List<ItemSlotUI> slotList =
         new List<ItemSlotUI>();
 
+    private bool isDragging;
+
     public bool IsOpen => gameObject.activeSelf;
 
-    private void Start()
+    public bool IsDragging => isDragging;
+
+    private void Awake()
     {
-        // Content Area의 기준점을 왼쪽 위로 설정
         if (contentArea != null)
         {
             contentArea.pivot = new Vector2(0f, 1f);
         }
-
-        Refresh();
     }
 
     public void Open()
@@ -43,6 +42,8 @@ public class InventoryUI : MonoBehaviour
 
     public void Close()
     {
+        HideAllHighlights();
+        bodyPartPopup.Hide();
         gameObject.SetActive(false);
     }
 
@@ -54,22 +55,35 @@ public class InventoryUI : MonoBehaviour
             Open();
     }
 
+    public void SetDragging(bool value)
+    {
+        isDragging = value;
+
+        if (value)
+        {
+            HideAllHighlights();
+        }
+    }
+
+    public void HideAllHighlights()
+    {
+        foreach (ItemSlotUI slot in slotList)
+        {
+            if (slot != null)
+            {
+                slot.HideHighlight();
+            }
+        }
+    }
+
     public void Refresh()
     {
         if (InventoryManager.Instance == null)
             return;
 
-        if (contentArea == null)
-        {
-            Debug.LogWarning("[InventoryUI] Content Area가 연결되지 않았습니다.");
+        if (contentArea == null ||
+            itemSlotPrefab == null)
             return;
-        }
-
-        if (itemSlotPrefab == null)
-        {
-            Debug.LogWarning("[InventoryUI] Item Slot Prefab이 연결되지 않았습니다.");
-            return;
-        }
 
         InitSlots();
 
@@ -94,20 +108,21 @@ public class InventoryUI : MonoBehaviour
 
     private void InitSlots()
     {
-        int slotCount = InventoryManager.Instance.Capacity;
+        int slotCount =
+            InventoryManager.Instance.Capacity;
 
-        // 이미 만들어진 슬롯보다 필요한 슬롯이 많으면 생성
         while (slotList.Count < slotCount)
         {
             CreateSlot(slotList.Count);
         }
 
-        // 인벤토리 최대 칸 수가 줄었다면 제거
         while (slotList.Count > slotCount)
         {
-            int lastIndex = slotList.Count - 1;
+            int lastIndex =
+                slotList.Count - 1;
 
-            ItemSlotUI slot = slotList[lastIndex];
+            ItemSlotUI slot =
+                slotList[lastIndex];
 
             slotList.RemoveAt(lastIndex);
 
@@ -123,13 +138,19 @@ public class InventoryUI : MonoBehaviour
     private void CreateSlot(int slotIndex)
     {
         ItemSlotUI slotUI =
-            Instantiate(itemSlotPrefab, contentArea);
+            Instantiate(
+                itemSlotPrefab,
+                contentArea
+            );
 
         RectTransform slotRT =
             slotUI.GetComponent<RectTransform>();
 
         slotRT.sizeDelta =
-            new Vector2(slotSize, slotSize);
+            new Vector2(
+                slotSize,
+                slotSize
+            );
 
         slotRT.anchorMin =
             new Vector2(0f, 1f);
@@ -144,6 +165,12 @@ public class InventoryUI : MonoBehaviour
 
         slotUI.gameObject.name =
             $"Item Slot [{slotIndex}]";
+
+        slotUI.Initialize(
+            this,
+            contentArea,
+            slotIndex
+        );
 
         slotList.Add(slotUI);
     }
@@ -162,7 +189,10 @@ public class InventoryUI : MonoBehaviour
             );
 
         actualHorizontalCount =
-            Mathf.Max(1, actualHorizontalCount);
+            Mathf.Max(
+                1,
+                actualHorizontalCount
+            );
 
         actualHorizontalCount =
             Mathf.Min(
@@ -186,14 +216,31 @@ public class InventoryUI : MonoBehaviour
 
             float x =
                 contentAreaPadding +
-                column * (slotSize + slotMargin);
+                column *
+                (slotSize + slotMargin);
 
             float y =
                 -contentAreaPadding -
-                row * (slotSize + slotMargin);
+                row *
+                (slotSize + slotMargin);
 
             RectTransform slotRT =
                 slotList[i].GetComponent<RectTransform>();
+
+            slotRT.anchorMin =
+                new Vector2(0f, 1f);
+
+            slotRT.anchorMax =
+                new Vector2(0f, 1f);
+
+            slotRT.pivot =
+                new Vector2(0f, 1f);
+
+            slotRT.sizeDelta =
+                new Vector2(
+                    slotSize,
+                    slotSize
+                );
 
             slotRT.anchoredPosition =
                 new Vector2(x, y);
@@ -202,11 +249,33 @@ public class InventoryUI : MonoBehaviour
         float contentHeight =
             contentAreaPadding * 2f +
             rowCount * slotSize +
-            Mathf.Max(0, rowCount - 1) * slotMargin;
+            Mathf.Max(
+                0,
+                rowCount - 1
+            ) * slotMargin;
 
         contentArea.SetSizeWithCurrentAnchors(
             RectTransform.Axis.Vertical,
             contentHeight
         );
+    }
+    public void OpenBodyPartPopup(InventoryItemData item)
+    {
+        if (item == null)
+            return;
+
+        if (isDragging)
+            return;
+
+        if (bodyPartPopup == null)
+        {
+            Debug.LogWarning(
+                "[InventoryUI] BodyPartSelectionPopup이 연결되지 않았습니다."
+            );
+
+            return;
+        }
+
+        bodyPartPopup.Show(item);
     }
 }

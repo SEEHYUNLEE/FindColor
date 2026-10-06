@@ -59,17 +59,31 @@ public class Item : MonoBehaviour
         }
     }
 
-    public void InitializeColor(Color targetColor)
+    public void InitializeColor(SlimeColorData colorData)
     {
+        colorType = colorData.colorType;
+
         if (spriteRenderer == null)
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
         if (spriteRenderer != null)
-            spriteRenderer.color = targetColor;
+            spriteRenderer.color = colorData.color;
 
         if (itemLight != null)
-            itemLight.color = targetColor;
+            itemLight.color = colorData.color;
     }
+
+    //public void InitializeColor(Color targetColor)
+    //{
+    //    if (spriteRenderer == null)
+    //        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+    //    if (spriteRenderer != null)
+    //        spriteRenderer.color = targetColor;
+
+    //    if (itemLight != null)
+    //        itemLight.color = targetColor;
+    //}
 
     // 1. 드롭 및 점프 연출
     private IEnumerator AnimatePopUp()

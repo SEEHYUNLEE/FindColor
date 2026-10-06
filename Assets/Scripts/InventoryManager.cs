@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -9,7 +9,7 @@ public class InventoryManager : MonoBehaviour
     public static InventoryManager Instance => instance;
 
     [Header("Inventory Settings")]
-    [SerializeField] private int defaultCapacity = 20;
+    [SerializeField] private int defaultCapacity = 10;
 
     private InventoryUI inventoryUI;
 
@@ -23,6 +23,12 @@ public class InventoryManager : MonoBehaviour
                 return defaultCapacity;
             }
 
+            if (DataManager.Instance.currentData.inventoryCapacity <= 0)
+            {
+                DataManager.Instance.currentData.inventoryCapacity =
+                    defaultCapacity;
+            }
+
             return DataManager.Instance.currentData.inventoryCapacity;
         }
     }
@@ -31,18 +37,7 @@ public class InventoryManager : MonoBehaviour
     {
         get
         {
-            if (DataManager.Instance == null ||
-                DataManager.Instance.currentData == null)
-            {
-                return null;
-            }
-
-            if (DataManager.Instance.currentData.inventoryItems == null)
-            {
-                DataManager.Instance.currentData.inventoryItems =
-                    new List<InventoryItemData>();
-            }
-
+            Initialize();
             return DataManager.Instance.currentData.inventoryItems;
         }
     }
@@ -60,21 +55,6 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        Initialize();
-        FindInventoryUI();
-    }
-
-    private void Update()
-    {
-        if (Keyboard.current != null &&
-        Keyboard.current.iKey.wasPressedThisFrame)
-        {
-            ToggleInventory();
-        }
-    }
-
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -85,6 +65,29 @@ public class InventoryManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    private void Start()
+    {
+        Initialize();
+        FindInventoryUI();
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current != null &&
+            Keyboard.current.iKey.wasPressedThisFrame)
+        {
+            if (inventoryUI == null)
+            {
+                FindInventoryUI();
+            }
+
+            if (inventoryUI == null)
+                return;
+
+            ToggleInventory();
+        }
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         FindInventoryUI();
@@ -92,7 +95,10 @@ public class InventoryManager : MonoBehaviour
 
     private void FindInventoryUI()
     {
-        inventoryUI = FindFirstObjectByType<InventoryUI>(FindObjectsInactive.Include);
+        inventoryUI =
+            FindFirstObjectByType<InventoryUI>(
+                FindObjectsInactive.Include
+            );
 
         if (inventoryUI != null)
         {
@@ -102,8 +108,11 @@ public class InventoryManager : MonoBehaviour
 
     public void Initialize()
     {
-        if (DataManager.Instance == null)
+        if (DataManager.Instance == null ||
+            DataManager.Instance.currentData == null)
+        {
             return;
+        }
 
         if (DataManager.Instance.currentData.inventoryItems == null)
         {
@@ -116,104 +125,218 @@ public class InventoryManager : MonoBehaviour
             DataManager.Instance.currentData.inventoryCapacity =
                 defaultCapacity;
         }
-    }
 
-    private void ToggleInventory()
-    {
-        if (inventoryUI == null)
-            return;
-
-        if (inventoryUI.IsOpen)
-            inventoryUI.Close();
-        else
-            inventoryUI.Open();
-    }
-
-    public bool AddItem(SlimeColorType colorType, int amount = 1)
-    {
-        if (amount <= 0)
-            return false;
-
-        Initialize();
-
-        InventoryItemData existingItem =
-            Items.Find(item => item.colorType == colorType);
-
-        if (existingItem != null)
+        // 저장된 아이템 리스트를 실제 슬롯 수만큼 맞춤
+        while (DataManager.Instance.currentData.inventoryItems.Count <
+               DataManager.Instance.currentData.inventoryCapacity)
         {
-            existingItem.amount += amount;
+            DataManager.Instance.currentData.inventoryItems.Add(null);
         }
-        else
+
+        // 슬롯 수보다 리스트가 큰 경우
+        while (DataManager.Instance.currentData.inventoryItems.Count >
+               DataManager.Instance.currentData.inventoryCapacity)
         {
-            if (Items.Count >= Capacity)
+            int lastIndex =
+                DataManager.Instance.currentData.inventoryItems.Count - 1;
+
+            if (DataManager.Instance.currentData.inventoryItems[lastIndex] != null)
             {
-                Debug.LogWarning("인벤토리가 가득 찼습니다.");
-                return false;
+                break;
             }
 
-            Items.Add(new InventoryItemData(colorType, amount));
+            DataManager.Instance.currentData.inventoryItems.RemoveAt(lastIndex);
         }
-
-        DataManager.Instance.SaveCurrentSlot();
-
-        if (inventoryUI != null)
-        {
-            inventoryUI.Refresh();
-        }
-
-        return true;
     }
 
-    public bool RemoveItem(SlimeColorType colorType, int amount = 1)
+    public bool AddItem(
+        SlimeColorType colorType,
+        int amount = 1)
     {
         if (amount <= 0)
             return false;
 
         Initialize();
 
-        InventoryItemData item =
-            Items.Find(value => value.colorType == colorType);
+        List<InventoryItemData> items = Items;
 
-        if (item == null || item.amount < amount)
+        // 같은 아이템이 이미 존재하면 수량 증가
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i] != null &&
+                items[i].colorType == colorType)
+            {
+                items[i].amount += amount;
+
+                DataManager.Instance.SaveCurrentSlot();
+
+                if (inventoryUI != null)
+                    inventoryUI.Refresh();
+
+                return true;
+            }
+        }
+
+        // 빈 슬롯 찾기
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i] == null)
+            {
+                items[i] =
+                    new InventoryItemData(colorType, amount);
+
+                DataManager.Instance.SaveCurrentSlot();
+
+                if (inventoryUI != null)
+                    inventoryUI.Refresh();
+
+                return true;
+            }
+        }
+
+        Debug.LogWarning("인벤토리가 가득 찼습니다.");
+        return false;
+    }
+
+    public bool RemoveItem(
+        SlimeColorType colorType,
+        int amount = 1)
+    {
+        if (amount <= 0)
             return false;
 
-        item.amount -= amount;
+        Initialize();
 
-        if (item.amount <= 0)
+        List<InventoryItemData> items = Items;
+
+        for (int i = 0; i < items.Count; i++)
         {
-            Items.Remove(item);
+            if (items[i] == null)
+                continue;
+
+            if (items[i].colorType != colorType)
+                continue;
+
+            if (items[i].amount < amount)
+                return false;
+
+            items[i].amount -= amount;
+
+            if (items[i].amount <= 0)
+            {
+                items[i] = null;
+            }
+
+            DataManager.Instance.SaveCurrentSlot();
+
+            if (inventoryUI != null)
+                inventoryUI.Refresh();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool Swap(
+        int indexA,
+        int indexB)
+    {
+        Initialize();
+
+        List<InventoryItemData> items = Items;
+
+        if (!IsValidIndex(indexA) ||
+            !IsValidIndex(indexB))
+        {
+            return false;
+        }
+
+        if (indexA == indexB)
+            return false;
+
+        InventoryItemData itemA = items[indexA];
+        InventoryItemData itemB = items[indexB];
+
+        // 비어있는 슬롯으로 이동
+        if (itemA != null && itemB == null)
+        {
+            items[indexB] = itemA;
+            items[indexA] = null;
+        }
+        // 비어있는 슬롯에서 시작하는 경우
+        else if (itemA == null && itemB != null)
+        {
+            items[indexA] = itemB;
+            items[indexB] = null;
+        }
+        // 두 슬롯 모두 아이템 존재
+        else if (itemA != null && itemB != null)
+        {
+            // 같은 아이템이면 합치기
+            if (itemA.colorType == itemB.colorType)
+            {
+                itemB.amount += itemA.amount;
+                items[indexA] = null;
+            }
+            // 서로 다른 아이템이면 위치 교환
+            else
+            {
+                items[indexA] = itemB;
+                items[indexB] = itemA;
+            }
         }
 
         DataManager.Instance.SaveCurrentSlot();
 
         if (inventoryUI != null)
-        {
             inventoryUI.Refresh();
-        }
 
         return true;
     }
 
-    public bool HasItem(SlimeColorType colorType, int amount = 1)
+    private bool IsValidIndex(int index)
+    {
+        return index >= 0 &&
+               index < Items.Count;
+    }
+
+    public bool HasItem(
+        SlimeColorType colorType,
+        int amount = 1)
     {
         if (Items == null)
             return false;
 
-        InventoryItemData item =
-            Items.Find(value => value.colorType == colorType);
+        foreach (InventoryItemData item in Items)
+        {
+            if (item != null &&
+                item.colorType == colorType &&
+                item.amount >= amount)
+            {
+                return true;
+            }
+        }
 
-        return item != null && item.amount >= amount;
+        return false;
     }
 
-    public int GetItemAmount(SlimeColorType colorType)
+    public int GetItemAmount(
+        SlimeColorType colorType)
     {
         if (Items == null)
             return 0;
 
-        InventoryItemData item =
-            Items.Find(value => value.colorType == colorType);
+        foreach (InventoryItemData item in Items)
+        {
+            if (item != null &&
+                item.colorType == colorType)
+            {
+                return item.amount;
+            }
+        }
 
-        return item != null ? item.amount : 0;
+        return 0;
     }
 
     public bool ExpandInventory(int amount)
@@ -225,13 +348,24 @@ public class InventoryManager : MonoBehaviour
 
         DataManager.Instance.currentData.inventoryCapacity += amount;
 
+        Initialize();
+
         DataManager.Instance.SaveCurrentSlot();
 
         if (inventoryUI != null)
-        {
             inventoryUI.Refresh();
-        }
 
         return true;
+    }
+
+    private void ToggleInventory()
+    {
+        if (inventoryUI == null)
+            return;
+
+        if (inventoryUI.IsOpen)
+            inventoryUI.Close();
+        else
+            inventoryUI.Open();
     }
 }

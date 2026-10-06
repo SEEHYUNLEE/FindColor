@@ -60,7 +60,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -93,7 +93,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8111125757445242539
 RectTransform:
   m_ObjectHideFlags: 0
@@ -135,7 +135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 1, b: 0.90737987, a: 0.6666667}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -185,7 +185,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2, y: 0}
+  m_AnchoredPosition: {x: 5.220001, y: 7.58}
   m_SizeDelta: {x: 30, y: 20}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &4093421042821649226
@@ -225,8 +225,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4293525248
-  m_fontColor: {r: 0, g: 1, b: 0.914711, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -249,7 +249,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -349,7 +349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -380,6 +380,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemSlotUI
   itemIcon: {fileID: 5402007568643255103}
   amountText: {fileID: 523102724268099480}
+  highlightImage: {fileID: 7030914179576498062}
   itemIcons:
   - colorType: 0
-    icon: {fileID: 1837586244020756203, guid: d1186f2e7c053b04680c0963d9d7e921, type: 3}
+    icon: {fileID: 6286595657586805340, guid: f70f121d6e0b29547a510cdc6d836ec4, type: 3}
+  - colorType: 1
+    icon: {fileID: 4478780333686333220, guid: 973deddac89c20043970f94e708c0033, type: 3}
+  - colorType: 2
+    icon: {fileID: 4478780333686333220, guid: 71a441c63b924a5468447cd787e68669, type: 3}
+  - colorType: 3
+    icon: {fileID: 8524264957605566986, guid: 7fbc309609155ec409a27b3878222bf2, type: 3}
+  - colorType: 4
+    icon: {fileID: 1221320294106142403, guid: cafc3f6a62e144f438245abc2fbbc996, type: 3}
+  - colorType: 5
+    icon: {fileID: -4592264596409728201, guid: 12bb602730c579742abd4cd7aa964c29, type: 3}
+  - colorType: 6
+    icon: {fileID: -2586517576398150844, guid: 926a72687267962489c0fad69babde2b, type: 3}
