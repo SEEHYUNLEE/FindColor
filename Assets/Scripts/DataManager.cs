@@ -8,9 +8,8 @@ public class PlayerData
 {
     public string playerName = "Player";
     public int stage = 1;
-    public int gold = 0; // 캐릭터의 보유 골드
+    public int gold = 0;
 
-    // 스탯별 강화 단계 (최대 7단계)
     public int hpLevel = 0;
     public int speedLevel = 0;
     public int damageLevel = 0;
@@ -94,10 +93,9 @@ public class DataManager : MonoBehaviour
     // 현재 선택된 슬롯에 데이터 저장
     public void SaveCurrentSlot()
     {
-        // 슬롯이 정식으로 선택되지 않은 상태라면 저장하지 않음 (덮어쓰기 방지)
+        // 덮어쓰기 방지
         if (!isSlotLoaded || currentSlotIndex < 1)
         {
-            Debug.LogWarning("[Save] 선택된 슬롯이 없어 저장을 건너뜁니다.");
             return;
         }
 
@@ -105,7 +103,6 @@ public class DataManager : MonoBehaviour
         string json = JsonConvert.SerializeObject(currentData, Formatting.Indented);
 
         File.WriteAllText(path, json);
-        Debug.Log($"[Save] {currentSlotIndex}번 슬롯에 저장되었습니다: {path}");
     }
 
     // 지정된 슬롯 데이터 불러오기
@@ -113,18 +110,16 @@ public class DataManager : MonoBehaviour
     {
         SelectSlot(slotIndex);
         string path = GetSavePath(slotIndex);
-        isSlotLoaded = true; // 슬롯 선택/로드 완료 플래그 활성화
+        isSlotLoaded = true; // 슬롯 선택 완료
 
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
             currentData = JsonConvert.DeserializeObject<PlayerData>(json);
-            Debug.Log($"[Load] {slotIndex}번 슬롯의 데이터를 불러왔습니다.");
             return true;
         }
         else
         {
-            Debug.Log($"[Load] {slotIndex}번 슬롯에 저장 파일이 없습니다. 새 데이터를 생성합니다.");
             currentData = new PlayerData(); // 파일이 없으면 초기화
             SaveCurrentSlot(); // 새 파일 생성
             return false;
@@ -188,16 +183,19 @@ public class DataManager : MonoBehaviour
             case StatType.Hp:
                 if (currentData.hpLevel >= MAX_LEVEL) return false;
                 currentData.hpLevel++;
+                AudioManager.Instance.PlaySFX(SFXType.Upgrade);
                 break;
 
             case StatType.Speed:
                 if (currentData.speedLevel >= MAX_LEVEL) return false;
                 currentData.speedLevel++;
+                AudioManager.Instance.PlaySFX(SFXType.Upgrade);
                 break;
 
             case StatType.Damage:
                 if (currentData.damageLevel >= MAX_LEVEL) return false;
                 currentData.damageLevel++;
+                AudioManager.Instance.PlaySFX(SFXType.Upgrade);
                 break;
         }
 
@@ -208,7 +206,7 @@ public class DataManager : MonoBehaviour
     public void AddGold(int amount = 100)
     {
         currentData.gold += amount;
-        SaveCurrentSlot(); // 골드 획득 즉시 자동 저장
+        SaveCurrentSlot();
     }
 
     public void SetPlayerName(string newName)

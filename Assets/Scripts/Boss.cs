@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class Boss : MonoBehaviour
 {
-    private int maxHp = 20;
+    private int maxHp = 200;
     private int currentHp;
 
     private bool isDead;
@@ -45,25 +45,20 @@ public class Boss : MonoBehaviour
     {
         while (true)
         {
+            AudioManager.Instance.PlaySFX(SFXType.SlimeAttack);
+
             for (int i = 0; i < 8; i++)
             {
                 float angle = Mathf.PI * 2f * i / 8f;
 
-                Vector2 direction = new Vector2(
-                    Mathf.Cos(angle),
-                    Mathf.Sin(angle)
-                ).normalized;
+                Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
 
                 BossMissile missile = MissilePool.Instance.GetMissile();
                 
                 // 중앙에서 거리를 두고 생성
                 missile.transform.position = transform.position + (Vector3)(direction);
 
-                missile.Initialize(
-                    direction,
-                    missileSpeed,
-                    true
-                );
+                missile.Initialize(direction, missileSpeed, true);
             }
 
             yield return new WaitForSeconds(2f);
@@ -74,27 +69,21 @@ public class Boss : MonoBehaviour
         if (isDead)
             return;
 
+        AudioManager.Instance.PlaySFX(SFXType.SlimeAttack);
+
         for (int i = 0; i < 5; i++)
         {
             float angle = Mathf.PI * 2f * i / 5f;
 
-            Vector2 direction = new Vector2(
-                Mathf.Cos(angle),
-                Mathf.Sin(angle)
-            ).normalized;
+            Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
 
             BossMissile missile = MissilePool.Instance.GetMissile();
 
             // 보스 중심에서 1만큼 떨어진 곳에서 생성
-            missile.transform.position =
-                transform.position + (Vector3)direction;
+            missile.transform.position = transform.position + (Vector3)direction;
 
             // 휘지 않고 직선으로 발사
-            missile.Initialize(
-                direction,
-                missileSpeed,
-                false
-            );
+            missile.Initialize(direction, missileSpeed, false);
         }
     }
 
@@ -108,12 +97,10 @@ public class Boss : MonoBehaviour
             // 이동 방향에 따라 보스 방향 변경
             if (targetPosition.x > transform.position.x)
             {
-                // 오른쪽으로 이동
                 spriteRenderer.flipX = true;
             }
             else
             {
-                // 왼쪽으로 이동
                 spriteRenderer.flipX = false;
             }
 
@@ -131,11 +118,7 @@ public class Boss : MonoBehaviour
 
                 float t = elapsedTime / jumpTime;
 
-                transform.position = Vector3.Lerp(
-                    startPosition,
-                    targetPosition,
-                    t
-                );
+                transform.position = Vector3.Lerp(startPosition, targetPosition, t);
 
                 yield return null;
             }
@@ -155,20 +138,15 @@ public class Boss : MonoBehaviour
 
         if (collision.CompareTag("Player"))
         {
-            PlayerController playerController =
-                collision.GetComponent<PlayerController>();
+            PlayerController playerController = collision.GetComponent<PlayerController>();
 
             if (playerController != null)
             {
                 playerController.TakeDamage(50f);
 
-                Vector2 knockbackDirection =
-                    (collision.transform.position - transform.position).normalized;
+                Vector2 knockbackDirection = (collision.transform.position - transform.position).normalized;
 
-                playerController.KnockBack(
-                    knockbackDirection,
-                    10f
-                );
+                playerController.KnockBack(knockbackDirection, 10f);
             }
         }
     }
@@ -177,7 +155,7 @@ public class Boss : MonoBehaviour
     {
         if (isDead)
             return;
-
+        AudioManager.Instance.PlaySFX(SFXType.SlimeHit);
         currentHp -= damage;
         currentHp = Mathf.Max(currentHp, 0);
         hpBar.value = currentHp;
@@ -210,6 +188,7 @@ public class Boss : MonoBehaviour
         GameManager.Instance.ClearCurrentStage();
 
         animator.SetTrigger("Die");
+        AudioManager.Instance.PlaySFX(SFXType.SlimeDie);
 
         StartCoroutine(LoadMainMenuSceneAfterDelay());
     }

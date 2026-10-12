@@ -8,7 +8,6 @@ public class InventoryManager : MonoBehaviour
     private static InventoryManager instance;
     public static InventoryManager Instance => instance;
 
-    [Header("Inventory Settings")]
     [SerializeField] private int defaultCapacity = 10;
 
     private InventoryUI inventoryUI;
@@ -25,10 +24,8 @@ public class InventoryManager : MonoBehaviour
 
             if (DataManager.Instance.currentData.inventoryCapacity <= 0)
             {
-                DataManager.Instance.currentData.inventoryCapacity =
-                    defaultCapacity;
+                DataManager.Instance.currentData.inventoryCapacity = defaultCapacity;
             }
-
             return DataManager.Instance.currentData.inventoryCapacity;
         }
     }
@@ -73,8 +70,7 @@ public class InventoryManager : MonoBehaviour
 
     private void Update()
     {
-        if (Keyboard.current != null &&
-            Keyboard.current.iKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.iKey.wasPressedThisFrame)
         {
             if (inventoryUI == null)
             {
@@ -95,10 +91,7 @@ public class InventoryManager : MonoBehaviour
 
     private void FindInventoryUI()
     {
-        inventoryUI =
-            FindFirstObjectByType<InventoryUI>(
-                FindObjectsInactive.Include
-            );
+        inventoryUI = FindFirstObjectByType<InventoryUI>(FindObjectsInactive.Include);
 
         if (inventoryUI != null)
         {
@@ -108,37 +101,31 @@ public class InventoryManager : MonoBehaviour
 
     public void Initialize()
     {
-        if (DataManager.Instance == null ||
-            DataManager.Instance.currentData == null)
+        if (DataManager.Instance == null || DataManager.Instance.currentData == null)
         {
             return;
         }
 
         if (DataManager.Instance.currentData.inventoryItems == null)
         {
-            DataManager.Instance.currentData.inventoryItems =
-                new List<InventoryItemData>();
+            DataManager.Instance.currentData.inventoryItems = new List<InventoryItemData>();
         }
 
         if (DataManager.Instance.currentData.inventoryCapacity <= 0)
         {
-            DataManager.Instance.currentData.inventoryCapacity =
-                defaultCapacity;
+            DataManager.Instance.currentData.inventoryCapacity = defaultCapacity;
         }
 
         // 저장된 아이템 리스트를 실제 슬롯 수만큼 맞춤
-        while (DataManager.Instance.currentData.inventoryItems.Count <
-               DataManager.Instance.currentData.inventoryCapacity)
+        while (DataManager.Instance.currentData.inventoryItems.Count < DataManager.Instance.currentData.inventoryCapacity)
         {
             DataManager.Instance.currentData.inventoryItems.Add(null);
         }
 
         // 슬롯 수보다 리스트가 큰 경우
-        while (DataManager.Instance.currentData.inventoryItems.Count >
-               DataManager.Instance.currentData.inventoryCapacity)
+        while (DataManager.Instance.currentData.inventoryItems.Count > DataManager.Instance.currentData.inventoryCapacity)
         {
-            int lastIndex =
-                DataManager.Instance.currentData.inventoryItems.Count - 1;
+            int lastIndex = DataManager.Instance.currentData.inventoryItems.Count - 1;
 
             if (DataManager.Instance.currentData.inventoryItems[lastIndex] != null)
             {
@@ -149,9 +136,7 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public bool AddItem(
-        SlimeColorType colorType,
-        int amount = 1)
+    public bool AddItem(SlimeColorType colorType, int amount = 1)
     {
         if (amount <= 0)
             return false;
@@ -163,8 +148,7 @@ public class InventoryManager : MonoBehaviour
         // 같은 아이템이 이미 존재하면 수량 증가
         for (int i = 0; i < items.Count; i++)
         {
-            if (items[i] != null &&
-                items[i].colorType == colorType)
+            if (items[i] != null && items[i].colorType == colorType)
             {
                 items[i].amount += amount;
 
@@ -182,8 +166,7 @@ public class InventoryManager : MonoBehaviour
         {
             if (items[i] == null)
             {
-                items[i] =
-                    new InventoryItemData(colorType, amount);
+                items[i] = new InventoryItemData(colorType, amount);
 
                 DataManager.Instance.SaveCurrentSlot();
 
@@ -194,13 +177,10 @@ public class InventoryManager : MonoBehaviour
             }
         }
 
-        Debug.LogWarning("인벤토리가 가득 찼습니다.");
         return false;
     }
 
-    public bool RemoveItem(
-        SlimeColorType colorType,
-        int amount = 1)
+    public bool RemoveItem(SlimeColorType colorType, int amount = 1)
     {
         if (amount <= 0)
             return false;
@@ -238,16 +218,13 @@ public class InventoryManager : MonoBehaviour
         return false;
     }
 
-    public bool Swap(
-        int indexA,
-        int indexB)
+    public bool Swap(int indexA, int indexB)
     {
         Initialize();
 
         List<InventoryItemData> items = Items;
 
-        if (!IsValidIndex(indexA) ||
-            !IsValidIndex(indexB))
+        if (!IsValidIndex(indexA) || !IsValidIndex(indexB))
         {
             return false;
         }
@@ -301,18 +278,14 @@ public class InventoryManager : MonoBehaviour
                index < Items.Count;
     }
 
-    public bool HasItem(
-        SlimeColorType colorType,
-        int amount = 1)
+    public bool HasItem(SlimeColorType colorType, int amount = 1)
     {
         if (Items == null)
             return false;
 
         foreach (InventoryItemData item in Items)
         {
-            if (item != null &&
-                item.colorType == colorType &&
-                item.amount >= amount)
+            if (item != null && item.colorType == colorType && item.amount >= amount)
             {
                 return true;
             }
@@ -321,21 +294,18 @@ public class InventoryManager : MonoBehaviour
         return false;
     }
 
-    public int GetItemAmount(
-        SlimeColorType colorType)
+    public int GetItemAmount(SlimeColorType colorType)
     {
         if (Items == null)
             return 0;
 
         foreach (InventoryItemData item in Items)
         {
-            if (item != null &&
-                item.colorType == colorType)
+            if (item != null && item.colorType == colorType)
             {
                 return item.amount;
             }
         }
-
         return 0;
     }
 

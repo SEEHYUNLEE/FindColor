@@ -5,7 +5,7 @@ public class SlotButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExit
 {
     private Animator targetAnimator;
 
-    // SaveSlotUI에서 생성된 플레이어 프리팹의 Animator를 전달받는 함수
+    // SaveSlotUI에서 생성된 플레이어 프리팹의 Animator를 전달
     public void Setup(GameObject playerInstance)
     {
         if (playerInstance != null)

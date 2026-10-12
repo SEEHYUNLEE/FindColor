@@ -54,22 +54,16 @@ public class GameManager : MonoBehaviour
     // =========================================================
     // 씬 전환 관리
     // =========================================================
-
-    // 1. 타이틀 / 슬롯 선택 화면으로 이동
     public void LoadMainMenuScene()
     {
         SaveCurrentData();
         SceneManager.LoadScene(mainMenuSceneName);
     }
-
-    // 2. 메인 마을 / 로비 씬으로 이동
     public void LoadMainScene()
     {
         SaveCurrentData();
         SceneManager.LoadScene(mainSceneName);
     }
-
-    // 3. 노말 스테이지로 이동
     public void LoadNormalStage()
     {
         SaveCurrentData();
@@ -81,7 +75,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(bossStageSceneName);
     }
 
-    // 씬 전환 시 헬퍼 메서드 (자동 저장)
+    // 씬 전환 시 저장
     private void SaveCurrentData()
     {
         if (DataManager.Instance != null)

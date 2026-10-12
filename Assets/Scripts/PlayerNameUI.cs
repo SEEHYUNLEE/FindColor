@@ -94,10 +94,13 @@ public class PlayerNameUI : MonoBehaviour
     {
         isStoryPlaying = true;
 
-        // {0} 부분에 플레이어 이름 삽입
+        AudioManager.Instance.PauseBGMForDialogue();
+        AudioManager.Instance.PlaySFX(SFXType.Keyboard);
+
         string currentStory = string.Format(story, playerName);
 
         storyText.text = "";
+
 
         foreach (char letter in currentStory)
         {
@@ -108,10 +111,11 @@ public class PlayerNameUI : MonoBehaviour
 
         isStoryPlaying = false;
         storyCoroutine = null;
+        AudioManager.Instance.StopSFX();
 
         yield return new WaitForSeconds(2f);
 
-        // 패널 닫기
+        AudioManager.Instance.ResumeBGMAfterDialogue();
         panel.SetActive(false);
     }
 }

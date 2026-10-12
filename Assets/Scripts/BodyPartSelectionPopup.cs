@@ -3,7 +3,6 @@ using UnityEngine.UI;
 
 public class BodyPartSelectionPopup : MonoBehaviour
 {
-    [Header("Body Part Buttons")]
     [SerializeField] private Button[] bodyPartButtons;
 
     private InventoryItemData selectedItem;
@@ -20,11 +19,8 @@ public class BodyPartSelectionPopup : MonoBehaviour
 
             int index = i;
 
-            bodyPartButtons[i].onClick.AddListener(
-                () => SelectBodyPart(index)
-            );
+            bodyPartButtons[i].onClick.AddListener(() => SelectBodyPart(index));
         }
-
         Hide();
     }
 
@@ -37,8 +33,7 @@ public class BodyPartSelectionPopup : MonoBehaviour
 
         if (playerColorManager == null)
         {
-            playerColorManager =
-                FindFirstObjectByType<PlayerColorManager>();
+            playerColorManager = FindFirstObjectByType<PlayerColorManager>();
         }
 
         if (playerColorManager == null)
@@ -60,31 +55,22 @@ public class BodyPartSelectionPopup : MonoBehaviour
 
         if (playerColorManager == null)
         {
-            playerColorManager =
-                FindFirstObjectByType<PlayerColorManager>();
+            playerColorManager = FindFirstObjectByType<PlayerColorManager>();
         }
 
         if (playerColorManager == null)
             return;
 
-        Color itemColor =
-            GetColor(selectedItem.colorType);
+        Color itemColor = GetColor(selectedItem.colorType);
 
-        bool success =
-            playerColorManager.ApplyColorToPart(
-                partIndex,
-                itemColor
-            );
+        bool success = playerColorManager.ApplyColorToPart(partIndex, itemColor);
 
         if (!success)
             return;
 
         if (InventoryManager.Instance != null)
         {
-            InventoryManager.Instance.RemoveItem(
-                selectedItem.colorType,
-                1
-            );
+            InventoryManager.Instance.RemoveItem(selectedItem.colorType, 1);
         }
 
         selectedItem = null;
@@ -94,15 +80,13 @@ public class BodyPartSelectionPopup : MonoBehaviour
 
     private Color GetColor(SlimeColorType colorType)
     {
-        foreach (SlimeColorData colorData in
-                 SlimeColorPalette.Colors)
+        foreach (SlimeColorData colorData in SlimeColorPalette.Colors)
         {
             if (colorData.colorType == colorType)
             {
                 return colorData.color;
             }
         }
-
         return Color.white;
     }
 

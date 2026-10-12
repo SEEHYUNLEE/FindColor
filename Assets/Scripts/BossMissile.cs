@@ -19,6 +19,7 @@ public class BossMissile : MonoBehaviour
     {
         animator = GetComponent<Animator>();
     }
+
     // 미사일 풀에 들어갔다가 꺼내는 것이므로 초기화 중요
     public void Initialize(Vector2 direction, float speed, bool isCurve)
     {
@@ -49,8 +50,7 @@ public class BossMissile : MonoBehaviour
         }
 
         // 계속 앞으로 이동
-        transform.position +=
-            (Vector3)(direction * speed * Time.deltaTime);
+        transform.position += (Vector3)(direction * speed * Time.deltaTime);
 
         UpdateRotation();
 
@@ -69,19 +69,14 @@ public class BossMissile : MonoBehaviour
         float cos = Mathf.Cos(rad);
         float sin = Mathf.Sin(rad);
 
-        return new Vector2(
-            vector.x * cos - vector.y * sin,
-            vector.x * sin + vector.y * cos
-        ).normalized;
+        return new Vector2(vector.x * cos - vector.y * sin, vector.x * sin + vector.y * cos).normalized;
     }
 
     private void UpdateRotation()
     {
-        float angle =
-            Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        transform.rotation =
-            Quaternion.Euler(0f, 0f, angle);
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -106,7 +101,7 @@ public class BossMissile : MonoBehaviour
         }
     }
 
-    // 폭발 애니메이션 마지막 프레임의 Animation Event에서 호출
+    // 애니메이션 마지막 프레임에서 호출
     public void ReturnToPool()
     {
         MissilePool.Instance.ReturnMissile(this);

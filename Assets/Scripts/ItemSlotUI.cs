@@ -18,7 +18,6 @@ public class ItemSlotUI :
     [SerializeField] private TMP_Text amountText;
     [SerializeField] private Image highlightImage;
 
-    [Header("Item Icons")]
     [SerializeField] private ItemIconData[] itemIcons;
 
     private InventoryItemData currentItem;
@@ -53,10 +52,7 @@ public class ItemSlotUI :
         }
     }
 
-    public void Initialize(
-        InventoryUI inventoryUI,
-        RectTransform contentArea,
-        int slotIndex)
+    public void Initialize(InventoryUI inventoryUI,RectTransform contentArea,int slotIndex)
     {
         this.inventoryUI = inventoryUI;
         this.contentArea = contentArea;
@@ -73,8 +69,7 @@ public class ItemSlotUI :
             return;
         }
 
-        Sprite icon =
-            GetIcon(item.colorType);
+        Sprite icon = GetIcon(item.colorType);
 
         if (itemIcon != null)
         {
@@ -85,12 +80,8 @@ public class ItemSlotUI :
 
         if (amountText != null)
         {
-            amountText.text =
-                item.amount.ToString();
-
-            amountText.gameObject.SetActive(
-                item.amount > 1
-            );
+            amountText.text = item.amount.ToString();
+            amountText.gameObject.SetActive(item.amount > 1);
         }
     }
 
@@ -103,18 +94,15 @@ public class ItemSlotUI :
             itemIcon.sprite = null;
             itemIcon.enabled = false;
         }
-
         if (amountText != null)
         {
             amountText.text = "";
             amountText.gameObject.SetActive(false);
         }
-
         HideHighlight();
     }
 
-    private Sprite GetIcon(
-        SlimeColorType colorType)
+    private Sprite GetIcon(SlimeColorType colorType)
     {
         if (itemIcons == null)
             return null;
@@ -124,7 +112,6 @@ public class ItemSlotUI :
             if (iconData.colorType == colorType)
                 return iconData.icon;
         }
-
         return null;
     }
 
@@ -137,22 +124,18 @@ public class ItemSlotUI :
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // 우클릭인지 확인
         if (eventData.button != PointerEventData.InputButton.Right)
             return;
 
-        // 빈 슬롯이면 사용하지 않음
         if (currentItem == null)
             return;
 
-        // 드래그 중이면 사용하지 않음
         if (isDragging)
             return;
 
         if (inventoryUI == null)
             return;
 
-        // BodyPartSelectionPopup 열기
         inventoryUI.OpenBodyPartPopup(currentItem);
     }
 
@@ -162,8 +145,7 @@ public class ItemSlotUI :
         if (isDragging)
             return;
 
-        if (inventoryUI != null &&
-            inventoryUI.IsDragging)
+        if (inventoryUI != null && inventoryUI.IsDragging)
             return;
 
         ShowHighlight();
@@ -181,8 +163,7 @@ public class ItemSlotUI :
         if (currentItem == null)
             return;
 
-        if (inventoryUI == null ||
-            contentArea == null)
+        if (inventoryUI == null || contentArea == null)
             return;
 
         isDragging = true;
@@ -202,44 +183,29 @@ public class ItemSlotUI :
 
         Camera eventCamera = null;
 
-        if (canvas != null &&
-            canvas.renderMode !=
-            RenderMode.ScreenSpaceOverlay)
+        if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
         {
             eventCamera = canvas.worldCamera;
         }
 
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            contentArea,
-            eventData.position,
-            eventCamera,
-            out Vector2 localPosition))
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(contentArea, eventData.position, eventCamera, out Vector2 localPosition))
         {
-            slotRect.anchoredPosition =
-                localPosition;
+            slotRect.anchoredPosition = localPosition;
         }
     }
 
-    public void OnEndDrag(
-        PointerEventData eventData)
+    public void OnEndDrag(PointerEventData eventData)
     {
         if (!isDragging)
             return;
 
         isDragging = false;
 
-        ItemSlotUI endDragSlot =
-            RaycastAndGetFirstComponent(
-                eventData
-            );
+        ItemSlotUI endDragSlot = RaycastAndGetFirstComponent(eventData);
 
-        if (endDragSlot != null &&
-            endDragSlot != this)
+        if (endDragSlot != null && endDragSlot != this)
         {
-            InventoryManager.Instance.Swap(
-                Index,
-                endDragSlot.Index
-            );
+            InventoryManager.Instance.Swap(Index,endDragSlot.Index);
         }
 
         if (inventoryUI != null)
@@ -249,32 +215,24 @@ public class ItemSlotUI :
             inventoryUI.Refresh();
         }
 
-        if (endDragSlot != null &&
-            endDragSlot != this)
+        if (endDragSlot != null && endDragSlot != this)
         {
             endDragSlot.ShowHighlight();
         }
     }
 
-    private ItemSlotUI RaycastAndGetFirstComponent(
-        PointerEventData eventData)
+    private ItemSlotUI RaycastAndGetFirstComponent(PointerEventData eventData)
     {
         if (EventSystem.current == null)
             return null;
 
-        List<RaycastResult> results =
-            new List<RaycastResult>();
+        List<RaycastResult> results = new List<RaycastResult>();
 
-        EventSystem.current.RaycastAll(
-            eventData,
-            results
-        );
+        EventSystem.current.RaycastAll(eventData, results);
 
         foreach (RaycastResult result in results)
         {
-            ItemSlotUI slot =
-                result.gameObject
-                    .GetComponentInParent<ItemSlotUI>();
+            ItemSlotUI slot = result.gameObject.GetComponentInParent<ItemSlotUI>();
 
             if (slot == null)
                 continue;
@@ -284,14 +242,12 @@ public class ItemSlotUI :
 
             return slot;
         }
-
         return null;
     }
 
     public void ShowHighlight()
     {
-        if (inventoryUI != null &&
-            inventoryUI.IsDragging)
+        if (inventoryUI != null && inventoryUI.IsDragging)
             return;
 
         if (highlightImage != null)

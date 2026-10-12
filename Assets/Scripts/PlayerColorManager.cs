@@ -13,7 +13,7 @@ public class PlayerColorManager : MonoBehaviour
     [Header("Player Body Parts (Total 7)")]
     [SerializeField] private List<BodyPart> bodyParts = new List<BodyPart>();
 
-    // 이미 색상이 변경된 부위의 인덱스를 저장하는 리스트 (HashSet 대신 List 사용)
+    // 이미 색상이 변경된 부위의 인덱스를 저장하는 리스트
     private List<int> coloredParts = new List<int>();
 
     private void Start()
@@ -25,9 +25,8 @@ public class PlayerColorManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 외부(Item)에서 호출해 아이템 색상을 7개 부위 중 미색상 부위에 적용
-    /// </summary>
+
+    // Item에서 호출해 아이템 색상을 7개 부위 중 미색상 부위에 적용
     public void ApplyColorToRandomPart(Color newColor)
     {
         // 1. 아직 색상이 안 바뀐 부위의 인덱스 목록 추출
@@ -43,10 +42,7 @@ public class PlayerColorManager : MonoBehaviour
 
         // 2. 만약 모든 부위가 이미 색상이 칠해졌다면 처리 중단
         if (availableIndices.Count == 0)
-        {
-            Debug.Log("모든 신체 부위의 색상이 이미 변경되었습니다!");
             return;
-        }
 
         // 3. 남은 부위 중 무작위 하나 선택
         int randomIndex = availableIndices[Random.Range(0, availableIndices.Count)];
@@ -61,52 +57,30 @@ public class PlayerColorManager : MonoBehaviour
             SaveColorData(DataManager.Instance.currentData);
         }
     }
-    public bool ApplyColorToPart(
-        int partIndex,
-        Color newColor)
+    public bool ApplyColorToPart(int partIndex, Color newColor)
     {
-        if (partIndex < 0 ||
-            partIndex >= bodyParts.Count)
-        {
-            Debug.LogWarning(
-                $"잘못된 Body Part Index: {partIndex}"
-            );
-
+        if (partIndex < 0 || partIndex >= bodyParts.Count)
             return false;
-        }
 
         if (bodyParts[partIndex].renderer == null)
-        {
-            Debug.LogWarning(
-                $"Body Part [{partIndex}]의 SpriteRenderer가 없습니다."
-            );
-
             return false;
-        }
 
         // 기존 색상과 상관없이 새 색상 적용
-        bodyParts[partIndex].renderer.color =
-            newColor;
+        bodyParts[partIndex].renderer.color = newColor;
 
         // 색칠된 부위로 기록
         if (!coloredParts.Contains(partIndex))
-        {
             coloredParts.Add(partIndex);
-        }
 
         // 저장
         if (DataManager.Instance != null)
         {
-            SaveColorData(
-                DataManager.Instance.currentData
-            );
-
+            SaveColorData(DataManager.Instance.currentData);
             DataManager.Instance.SaveCurrentSlot();
         }
 
         return true;
     }
-
 
     // --- JSON 저장 시 호출 ---
     public void SaveColorData(PlayerData data)
@@ -128,7 +102,7 @@ public class PlayerColorManager : MonoBehaviour
             }
             else
             {
-                data.bodyPartHexColors.Add("#FFFFFF"); // null 예외 대비 기본값
+                data.bodyPartHexColors.Add("#FFFFFF"); // 예외 대비 기본값
             }
         }
     }

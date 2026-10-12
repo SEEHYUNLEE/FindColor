@@ -17,6 +17,7 @@ public class SaveUI : MonoBehaviour, IPointerClickHandler
         }
 
         // 세이브창 바깥을 클릭하면 닫기
+        AudioManager.Instance.PlaySFX(SFXType.Click);
         gameObject.SetActive(false);
     }
 }

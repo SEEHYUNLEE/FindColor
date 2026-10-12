@@ -43,11 +43,14 @@ public class NormalPortal : MonoBehaviour
         if (ConvertImage != null)
         {
             ConvertImage.SetActive(true);
+            AudioManager.Instance.StopBGM();
+            AudioManager.Instance.PlaySFX(SFXType.Warp);
         }
 
         // 애니메이션 재생 시간만큼 대기
         yield return new WaitForSeconds(transitionTime);
 
+        AudioManager.Instance.StopSFX();
         // 일반 스테이지 이동
         GameManager.Instance.LoadNormalStage();
     }

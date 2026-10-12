@@ -1,7 +1,6 @@
 using UnityEngine;
 public class AttackEffect : MonoBehaviour
 {
-    private float maxLifetime = 5f; // 이벤트 미발생 대비 안전용 최대 수명
     private int baseDamage = 10;
     private int damagePerLevel = 10;
 
@@ -10,6 +9,7 @@ public class AttackEffect : MonoBehaviour
 
     private void Start()
     {
+        AudioManager.Instance.PlaySFX(SFXType.PlayerAttack);
         if (DataManager.Instance != null && DataManager.Instance.currentData != null)
         {
             int damageLevel = DataManager.Instance.currentData.damageLevel;
@@ -29,9 +29,6 @@ public class AttackEffect : MonoBehaviour
         {
             finalDamage = baseDamage;
         }
-        // 만약 애니메이션 이벤트가 어떤 이유로 호출되지 않더라도 
-        // 일정 시간이 지나면 메모리 누수를 방지하기 위해 자동으로 삭제
-        Destroy(gameObject, maxLifetime);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -56,8 +53,7 @@ public class AttackEffect : MonoBehaviour
         }
     }
 
-    // [애니메이션 이벤트용 함수]
-    // 애니메이션의 마지막 프레임에 이 함수를 등록해둡니다.
+    // 애니메이션의 마지막 프레임에 등록
     public void DestroySelf()
     {
         Destroy(gameObject);

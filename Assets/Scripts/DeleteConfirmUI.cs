@@ -26,7 +26,6 @@ public class DeleteConfirmUI : MonoBehaviour
     {
         if (targetSlotIndex != -1)
         {
-            // DataManager를 이용해 세이브 데이터 및 파일 삭제
             DataManager.Instance.DeleteSlot(targetSlotIndex);
 
             // 삭제 후 슬롯 UI 텍스트 및 X버튼 상태 갱신
@@ -35,18 +34,20 @@ public class DeleteConfirmUI : MonoBehaviour
                 ownerSlotUI.UpdateSlotUI();
             }
         }
-
+        AudioManager.Instance.PlaySFX(SFXType.Click);
         ClosePopup();
     }
 
     private void OnClickNo()
     {
+        AudioManager.Instance.PlaySFX(SFXType.Click);
         ClosePopup();
     }
 
     private void ClosePopup()
     {
         targetSlotIndex = -1;
+        AudioManager.Instance.PlaySFX(SFXType.Click);
         gameObject.SetActive(false);
     }
 }

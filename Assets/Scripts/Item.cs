@@ -16,14 +16,14 @@ public class Item : MonoBehaviour
     [SerializeField] private float jumpHeight = 1.2f;
     [SerializeField] private float dropDistance = 1.0f;
 
-    [Header("Magnet / Magnetize Settings")]
-    [SerializeField] private float magnetDistance = 1f; // 흡수 시작 거리
-    [SerializeField] private float magnetSpeed = 3.0f;    // 빨려 들어가는 속도
-    [SerializeField] private float pickupDistance = 0.2f; // 최종 획득 처리 거리
+    [Header("Magnet Settings")]
+    [SerializeField] private float magnetDistance = 1f;
+    [SerializeField] private float magnetSpeed = 3.0f;
+    [SerializeField] private float pickupDistance = 0.2f;
 
     private Transform playerTransform;
-    private bool isLand = false;        // 착지 완료 여부
-    private bool isBeingAbsorbed = false; // 흡수 진행 중 여부
+    private bool isLand = false;
+    private bool isBeingAbsorbed = false;
 
     private void Awake()
     {
@@ -46,11 +46,10 @@ public class Item : MonoBehaviour
 
     private void Update()
     {
-        // 땅에 착지하지 않았거나 이미 흡수 중인 경우 감지 안 함
         if (!isLand || isBeingAbsorbed || playerTransform == null)
             return;
 
-        // 플레이어와의 거리 체크
+        // 플레이어 거리 체크
         float distance = Vector3.Distance(transform.position, playerTransform.position);
 
         if (distance <= magnetDistance)
@@ -72,18 +71,6 @@ public class Item : MonoBehaviour
         if (itemLight != null)
             itemLight.color = colorData.color;
     }
-
-    //public void InitializeColor(Color targetColor)
-    //{
-    //    if (spriteRenderer == null)
-    //        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-
-    //    if (spriteRenderer != null)
-    //        spriteRenderer.color = targetColor;
-
-    //    if (itemLight != null)
-    //        itemLight.color = targetColor;
-    //}
 
     // 1. 드롭 및 점프 연출
     private IEnumerator AnimatePopUp()
@@ -161,6 +148,8 @@ public class Item : MonoBehaviour
     // 3. 아이템 획득 시 로직
     private void OnCollect()
     {
+        AudioManager.Instance.PlaySFX(SFXType.Pickup);
+
         DataManager.Instance.AddGold(100);
 
         if (GameManager.Instance.GetCurrentStage() <= 7)
@@ -175,8 +164,7 @@ public class Item : MonoBehaviour
         if (GameManager.Instance != null)
             GameManager.Instance.ClearCurrentStage();
 
-        StageClearUI clearUI =
-            FindFirstObjectByType<StageClearUI>();
+        StageClearUI clearUI = FindFirstObjectByType<StageClearUI>();
 
         if (clearUI != null)
             clearUI.StartClearCountdown(3);
@@ -189,12 +177,9 @@ public class Item : MonoBehaviour
         if (playerTransform == null)
             return;
 
-        if (playerTransform.TryGetComponent<
-            PlayerColorManager>(
-                out var colorManager))
+        if (playerTransform.TryGetComponent<PlayerColorManager>(out var colorManager))
         {
-            colorManager.ApplyColorToRandomPart(
-                spriteRenderer.color);
+            colorManager.ApplyColorToRandomPart(spriteRenderer.color);
         }
     }
 
@@ -202,13 +187,9 @@ public class Item : MonoBehaviour
     {
         if (InventoryManager.Instance == null)
         {
-            Debug.LogWarning(
-                "InventoryManager가 존재하지 않습니다.");
             return;
         }
 
-        InventoryManager.Instance.AddItem(
-            colorType,
-            1);
+        InventoryManager.Instance.AddItem(colorType,1);
     }
 }

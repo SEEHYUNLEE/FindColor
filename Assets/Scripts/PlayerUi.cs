@@ -9,12 +9,9 @@ public class PlayerUi : MonoBehaviour
         public SpriteRenderer renderer;
     }
 
-    [Header("Player Body Parts")]
     [SerializeField] private List<BodyPart> bodyParts = new List<BodyPart>();
 
-    /// <summary>
-    /// SaveSlotUI에서 불러온 PlayerData를 직접 전달받아 색상만 입힙니다.
-    /// </summary>
+    /// SaveSlotUI에서 불러온 PlayerData를 전달받아 색상 적용
     public void SetColorData(PlayerData data)
     {
         if (data == null || data.bodyPartHexColors == null) return;

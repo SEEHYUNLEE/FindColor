@@ -31,7 +31,6 @@ public class MapGenerator : MonoBehaviour
     [Header("Spawning")]
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject slimePrefab;
-    //[SerializeField] private int slimeCount = 3; // 생성할 슬라임 개수
 
     private List<GameObject> spawnedObjects = new List<GameObject>();
 
@@ -240,12 +239,14 @@ public class MapGenerator : MonoBehaviour
         {
             SetRoomTile(new Vector3Int(i - mapSize.x / 2, leftNodeCenter.y - mapSize.y / 2, 0));
             SetRoomTile(new Vector3Int(i - mapSize.x / 2, leftNodeCenter.y - mapSize.y / 2 + 1, 0));
+            SetRoomTile(new Vector3Int(i - mapSize.x / 2, leftNodeCenter.y - mapSize.y / 2 + 2, 0));
         }
 
         for (int j = Mathf.Min(leftNodeCenter.y, rightNodeCenter.y); j <= Mathf.Max(leftNodeCenter.y, rightNodeCenter.y); j++)
         {
             SetRoomTile(new Vector3Int(rightNodeCenter.x - mapSize.x / 2, j - mapSize.y / 2, 0));
             SetRoomTile(new Vector3Int(rightNodeCenter.x - mapSize.x / 2 + 1, j - mapSize.y / 2, 0));
+            SetRoomTile(new Vector3Int(rightNodeCenter.x - mapSize.x / 2 + 2, j - mapSize.y / 2, 0));
         }
 
         GenerateLoad(tree.leftNode, depth + 1);

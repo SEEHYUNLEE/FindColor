@@ -6,7 +6,6 @@ public class RepairShop : MonoBehaviour
 
     private void Start()
     {
-        // 시작 시 UI 비활성화
         if (upgradeUIPanel != null)
         {
             upgradeUIPanel.SetActive(false);
