@@ -4,19 +4,17 @@ using UnityEngine;
 
 public class StageClearUI : MonoBehaviour
 {
-    [SerializeField] private GameObject clearPanel;      // 카운트다운 패널
-    [SerializeField] private TMP_Text countdownText;     // 3, 2, 1 텍스트
-    [SerializeField] private GameObject ConvertImage;    // 화면 전환 이미지
+    [SerializeField] private GameObject clearPanel;
+    [SerializeField] private TMP_Text countdownText;
+    [SerializeField] private GameObject ConvertImage;
 
     private bool isClearing = false;
 
     private void Start()
     {
-        // 씬 시작 시 카운트다운 패널 끄기
         if (clearPanel != null)
             clearPanel.SetActive(false);
 
-        // 씬 시작 시 ConvertImage도 끄기
         if (ConvertImage != null)
             ConvertImage.SetActive(false);
     }
@@ -24,7 +22,6 @@ public class StageClearUI : MonoBehaviour
     // 아이템 획득 시 호출될 함수
     public void StartClearCountdown(int startCount = 3)
     {
-        // 이미 클리어 진행 중이면 중복 실행 방지
         if (isClearing)
             return;
 
@@ -54,16 +51,13 @@ public class StageClearUI : MonoBehaviour
             while (timer < 1.0f)
             {
                 timer += Time.deltaTime;
-
                 if (countdownText != null)
                 {
                     countdownText.transform.localScale =
                         Vector3.Lerp(initialScale, targetScale, timer);
                 }
-
                 yield return null;
             }
-
             count--;
         }
 
@@ -74,7 +68,9 @@ public class StageClearUI : MonoBehaviour
         // ConvertImage 활성화
         ConvertImage.SetActive(true);
 
-        // ConvertImage 애니메이션 재생 시간만큼 대기
+        AudioManager.Instance.StopBGM();
+        AudioManager.Instance.PlaySFX(SFXType.Warp);
+
         yield return new WaitForSeconds(3f);
 
         // 메인 씬 이동

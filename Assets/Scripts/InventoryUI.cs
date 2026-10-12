@@ -14,8 +14,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private ItemSlotUI itemSlotPrefab;
     [SerializeField] private BodyPartSelectionPopup bodyPartPopup;
 
-    private readonly List<ItemSlotUI> slotList =
-        new List<ItemSlotUI>();
+    private readonly List<ItemSlotUI> slotList = new List<ItemSlotUI>();
 
     private bool isDragging;
 
@@ -87,8 +86,7 @@ public class InventoryUI : MonoBehaviour
 
         InitSlots();
 
-        List<InventoryItemData> items =
-            InventoryManager.Instance.Items;
+        List<InventoryItemData> items = InventoryManager.Instance.Items;
 
         if (items == null)
             return;
@@ -108,8 +106,7 @@ public class InventoryUI : MonoBehaviour
 
     private void InitSlots()
     {
-        int slotCount =
-            InventoryManager.Instance.Capacity;
+        int slotCount = InventoryManager.Instance.Capacity;
 
         while (slotList.Count < slotCount)
         {
@@ -118,11 +115,9 @@ public class InventoryUI : MonoBehaviour
 
         while (slotList.Count > slotCount)
         {
-            int lastIndex =
-                slotList.Count - 1;
+            int lastIndex = slotList.Count - 1;
 
-            ItemSlotUI slot =
-                slotList[lastIndex];
+            ItemSlotUI slot = slotList[lastIndex];
 
             slotList.RemoveAt(lastIndex);
 
@@ -137,127 +132,65 @@ public class InventoryUI : MonoBehaviour
 
     private void CreateSlot(int slotIndex)
     {
-        ItemSlotUI slotUI =
-            Instantiate(
-                itemSlotPrefab,
-                contentArea
-            );
+        ItemSlotUI slotUI = Instantiate(itemSlotPrefab, contentArea);
 
-        RectTransform slotRT =
-            slotUI.GetComponent<RectTransform>();
+        RectTransform slotRT = slotUI.GetComponent<RectTransform>();
 
-        slotRT.sizeDelta =
-            new Vector2(
-                slotSize,
-                slotSize
-            );
+        slotRT.sizeDelta = new Vector2(slotSize, slotSize);
 
-        slotRT.anchorMin =
-            new Vector2(0f, 1f);
+        slotRT.anchorMin = new Vector2(0f, 1f);
 
-        slotRT.anchorMax =
-            new Vector2(0f, 1f);
+        slotRT.anchorMax = new Vector2(0f, 1f);
 
-        slotRT.pivot =
-            new Vector2(0f, 1f);
+        slotRT.pivot = new Vector2(0f, 1f);
 
         slotUI.gameObject.SetActive(true);
 
-        slotUI.gameObject.name =
-            $"Item Slot [{slotIndex}]";
+        slotUI.gameObject.name = $"Item Slot [{slotIndex}]";
 
-        slotUI.Initialize(
-            this,
-            contentArea,
-            slotIndex
-        );
+        slotUI.Initialize(this, contentArea, slotIndex);
 
         slotList.Add(slotUI);
     }
 
     private void PositionSlots(int slotCount)
     {
-        float contentWidth =
-            contentArea.rect.width;
+        float contentWidth = contentArea.rect.width;
 
-        int actualHorizontalCount =
-            Mathf.FloorToInt(
-                (contentWidth -
-                 contentAreaPadding * 2f +
-                 slotMargin) /
-                (slotSize + slotMargin)
-            );
+        int actualHorizontalCount = Mathf.FloorToInt((contentWidth - contentAreaPadding * 2f + slotMargin) / (slotSize + slotMargin));
 
-        actualHorizontalCount =
-            Mathf.Max(
-                1,
-                actualHorizontalCount
-            );
+        actualHorizontalCount = Mathf.Max(1,actualHorizontalCount);
 
-        actualHorizontalCount =
-            Mathf.Min(
-                actualHorizontalCount,
-                horizontalSlotCount
-            );
+        actualHorizontalCount = Mathf.Min(actualHorizontalCount, horizontalSlotCount);
 
-        int rowCount =
-            Mathf.CeilToInt(
-                (float)slotCount /
-                actualHorizontalCount
-            );
+        int rowCount = Mathf.CeilToInt((float)slotCount /actualHorizontalCount);
 
         for (int i = 0; i < slotList.Count; i++)
         {
-            int column =
-                i % actualHorizontalCount;
+            int column = i % actualHorizontalCount;
 
-            int row =
-                i / actualHorizontalCount;
+            int row = i / actualHorizontalCount;
 
-            float x =
-                contentAreaPadding +
-                column *
-                (slotSize + slotMargin);
+            float x = contentAreaPadding + column * (slotSize + slotMargin);
 
-            float y =
-                -contentAreaPadding -
-                row *
-                (slotSize + slotMargin);
+            float y = -contentAreaPadding - row * (slotSize + slotMargin);
 
-            RectTransform slotRT =
-                slotList[i].GetComponent<RectTransform>();
+            RectTransform slotRT = slotList[i].GetComponent<RectTransform>();
 
-            slotRT.anchorMin =
-                new Vector2(0f, 1f);
+            slotRT.anchorMin = new Vector2(0f, 1f);
 
-            slotRT.anchorMax =
-                new Vector2(0f, 1f);
+            slotRT.anchorMax = new Vector2(0f, 1f);
 
-            slotRT.pivot =
-                new Vector2(0f, 1f);
+            slotRT.pivot = new Vector2(0f, 1f);
 
-            slotRT.sizeDelta =
-                new Vector2(
-                    slotSize,
-                    slotSize
-                );
+            slotRT.sizeDelta = new Vector2(slotSize, slotSize);
 
-            slotRT.anchoredPosition =
-                new Vector2(x, y);
+            slotRT.anchoredPosition = new Vector2(x, y);
         }
 
-        float contentHeight =
-            contentAreaPadding * 2f +
-            rowCount * slotSize +
-            Mathf.Max(
-                0,
-                rowCount - 1
-            ) * slotMargin;
+        float contentHeight = contentAreaPadding * 2f + rowCount * slotSize + Mathf.Max(0,rowCount - 1) * slotMargin;
 
-        contentArea.SetSizeWithCurrentAnchors(
-            RectTransform.Axis.Vertical,
-            contentHeight
-        );
+        contentArea.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, contentHeight);
     }
     public void OpenBodyPartPopup(InventoryItemData item)
     {
@@ -268,13 +201,7 @@ public class InventoryUI : MonoBehaviour
             return;
 
         if (bodyPartPopup == null)
-        {
-            Debug.LogWarning(
-                "[InventoryUI] BodyPartSelectionPopup이 연결되지 않았습니다."
-            );
-
             return;
-        }
 
         bodyPartPopup.Show(item);
     }

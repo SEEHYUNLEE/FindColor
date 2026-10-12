@@ -42,6 +42,7 @@ public class EscUI : MonoBehaviour
     {
         if (escMenu == null) return;
 
+        AudioManager.Instance.PlaySFX(SFXType.Click);
         bool isActive = !escMenu.activeSelf;
         escMenu.SetActive(isActive);
 
@@ -54,6 +55,8 @@ public class EscUI : MonoBehaviour
     {
         // 일시정지 해제
         Time.timeScale = 1f;
+
+        AudioManager.Instance.PlaySFX(SFXType.Click);
 
         if (GameManager.Instance != null)
         {
@@ -70,6 +73,8 @@ public class EscUI : MonoBehaviour
     {
         // 일시정지 해제
         Time.timeScale = 1f;
+
+        AudioManager.Instance.PlaySFX(SFXType.Click);
 
         if (DataManager.Instance != null)
         {

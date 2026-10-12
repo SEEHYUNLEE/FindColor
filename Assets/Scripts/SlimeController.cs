@@ -11,16 +11,14 @@ public class SlimeController : MonoBehaviour
     public Animator animator;
 
     [Header("Damage Flash Settings")]
-    [SerializeField] private SpriteRenderer spriteRenderer; // 슬라임 스프라이트 렌더러
-    [SerializeField] private int flashCount = 3;             // 깜빡이는 횟수
-    [SerializeField] private float flashInterval = 0.05f;    // 간격 (초)
-    [SerializeField] private Color flashColor1 = Color.black;// 첫 번째 깜빡임 색상 (검정)
-    [SerializeField] private Color flashColor2 = Color.gray; // 두 번째 깜빡임 색상 (회색)
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private int flashCount = 3; 
+    [SerializeField] private float flashInterval = 0.05f;
+    [SerializeField] private Color flashColor1 = Color.black;
+    [SerializeField] private Color flashColor2 = Color.gray;
 
-    [Tooltip("위치가 이 값보다 이상 변경되면 이동 중으로 판단")]
     public float moveThreshold = 0.001f;
 
-    [Tooltip("죽는 애니메이션이 끝난 후 슬라임 제거")]
     public float dieAnimationLength = 1f;
 
     private Vector3 lastPosition;
@@ -32,7 +30,6 @@ public class SlimeController : MonoBehaviour
     private SlimeColorData myColorData;
     private Coroutine flashCoroutine;
 
-    // 외부(아이템 드롭 시스템 등)에서 슬라임 색상을 읽을 수 있는 프로퍼티
     public SlimeColorData MyColorData => myColorData;
 
     public GameObject itemPrefab;
@@ -121,12 +118,7 @@ public class SlimeController : MonoBehaviour
         currentHP =
             Mathf.Max(currentHP, 0);
 
-
-        Debug.Log(
-            gameObject.name +
-            " HP : " +
-            currentHP
-        );
+        AudioManager.Instance.PlaySFX(SFXType.SlimeHit);
 
         if (flashCoroutine != null)
         {
@@ -187,27 +179,13 @@ public class SlimeController : MonoBehaviour
             spriteRenderer.color = myColorData.color;
         }
 
-        // -----------------------------------------
-        // 슬라임 이동 중지
-        // -----------------------------------------
         StopMovement();
 
-
-        // -----------------------------------------
-        // 다른 스크립트 정지
-        // -----------------------------------------
         StopOtherScripts();
 
-
-        // -----------------------------------------
-        // Die 애니메이션
-        // -----------------------------------------
         PlayDie();
+        AudioManager.Instance.PlaySFX(SFXType.SlimeDie);
 
-
-        // -----------------------------------------
-        // 애니메이션 종료 후 삭제
-        // -----------------------------------------
         StartCoroutine(DestroyAfterDeath());
     }
 

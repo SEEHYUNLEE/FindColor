@@ -7,9 +7,13 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject color;
 
     [SerializeField] private GameObject saveUI;
+    [SerializeField] private GameObject settingUI;
 
     [SerializeField] private Button startButton;
     [SerializeField] private Button startButtonColor;
+
+    [SerializeField] private Button SettingButton;
+    [SerializeField] private Button SettingButtonColor;
 
     private void Start()
     {
@@ -17,6 +21,9 @@ public class MainMenu : MonoBehaviour
 
         startButton.onClick.AddListener(OpenSaveUI);
         startButtonColor.onClick.AddListener(OpenSaveUI);
+
+        SettingButton.onClick.AddListener(OpenSettingUI);
+        SettingButtonColor.onClick.AddListener(OpenSettingUI);
     }
 
     private void CheckColorMode()
@@ -42,6 +49,12 @@ public class MainMenu : MonoBehaviour
 
     private void OpenSaveUI()
     {
+        AudioManager.Instance.PlaySFX(SFXType.Click);
         saveUI.SetActive(true);
+    }
+    private void OpenSettingUI()
+    {
+        AudioManager.Instance.PlaySFX(SFXType.Click);
+        settingUI.SetActive(true);
     }
 }

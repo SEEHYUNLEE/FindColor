@@ -222,12 +222,6 @@ public class PlayerController : MonoBehaviour
 
     public void SpawnAttackEffect()
     {
-        if (attackEffectPrefab == null)
-        {
-            Debug.LogWarning("공격 이펙트 프리팹이 할당되지 않았습니다!");
-            return;
-        }
-
         Vector3 spawnPosition = firePoint != null ? firePoint.position : transform.position;
         GameObject effect = Instantiate(attackEffectPrefab, spawnPosition, Quaternion.identity);
 
@@ -264,6 +258,7 @@ public class PlayerController : MonoBehaviour
         isAttacking = false;
 
         animator.SetTrigger("Hit");
+        AudioManager.Instance.PlaySFX(SFXType.PlayerHit);
 
         if (CurrentHp <= 0f)
         {

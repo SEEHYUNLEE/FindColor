@@ -20,16 +20,15 @@ public class SaveSlotUI : MonoBehaviour
     [SerializeField] private DeleteConfirmUI deleteConfirmUI;
 
     [Header("Player Model Settings")]
-    [SerializeField] private GameObject playerPrefab; // 스폰할 플레이어 프리팹
-    [SerializeField] private Transform slot1PlayerSpawnPoint; // 슬롯 1 캐릭터 위치
-    [SerializeField] private Transform slot2PlayerSpawnPoint; // 슬롯 2 캐릭터 위치
-    [SerializeField] private Transform slot3PlayerSpawnPoint; // 슬롯 3 캐릭터 위치
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private Transform slot1PlayerSpawnPoint;
+    [SerializeField] private Transform slot2PlayerSpawnPoint;
+    [SerializeField] private Transform slot3PlayerSpawnPoint;
 
     private TMP_Text slot1Text;
     private TMP_Text slot2Text;
     private TMP_Text slot3Text;
 
-    // 생성된 플레이어 오브젝트를 관리하기 위한 변수
     private GameObject player1Instance;
     private GameObject player2Instance;
     private GameObject player3Instance;
@@ -166,13 +165,14 @@ public class SaveSlotUI : MonoBehaviour
 
     private void SelectSlotAndStartGame(int slotIndex)
     {
+        AudioManager.Instance.PlaySFX(SFXType.Click);
         // 1. 슬롯 데이터 불러오기 (없는 경우 DataManager 내부에서 자동 생성 및 저장)
         if (DataManager.Instance != null)
         {
             DataManager.Instance.LoadSlot(slotIndex);
         }
 
-        // 2. 메인 마을/로비(Main) 씬으로 이동
+        // 2. Main 씬으로 이동
         if (GameManager.Instance != null)
         {
             GameManager.Instance.LoadMainScene();
@@ -187,6 +187,7 @@ public class SaveSlotUI : MonoBehaviour
     {
         if (deleteConfirmUI != null)
         {
+            AudioManager.Instance.PlaySFX(SFXType.Click);
             deleteConfirmUI.OpenPopup(slotIndex, this);
         }
     }

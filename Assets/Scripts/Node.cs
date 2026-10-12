@@ -10,7 +10,6 @@ public class Node : IComparable<Node>
     public int gridX;
     public int gridY;
 
-    // Pathfinding
     public int gCost;
     public int hCost;
 

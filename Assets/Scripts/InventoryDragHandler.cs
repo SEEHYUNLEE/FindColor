@@ -24,10 +24,8 @@ public class InventoryDragHandler :
         if (inventoryUI == null)
             return;
 
-        float scaleFactor =
-            canvas != null ? canvas.scaleFactor : 1f;
+        float scaleFactor = canvas != null ? canvas.scaleFactor : 1f;
 
-        inventoryUI.anchoredPosition +=
-            eventData.delta / scaleFactor;
+        inventoryUI.anchoredPosition += eventData.delta / scaleFactor;
     }
 }
