@@ -4,13 +4,11 @@ using UnityEngine.Tilemaps;
 
 public class Grid : MonoBehaviour
 {
-    [Header("References")]
     public Transform player;
     public Tilemap floorTilemap;
     public Tilemap wallBackTilemap;
     public Tilemap wallFrontTilemap;
 
-    [Header("Gizmo")]
     public float gizmoLineWidth = 0.02f;
 
     private Node[,] grid;
@@ -20,22 +18,14 @@ public class Grid : MonoBehaviour
 
     public bool isGridCreated { get; private set; }
 
-    // PathfindingTest에서 사용하는 현재 경로
     public List<Node> path = new List<Node>();
-
-
-    // =========================================================
-    // Start & 자동 오브젝트 검색
-    // =========================================================
 
     private void Start()
     {
-        // 이름으로 타일맵 및 플레이어 자동 할당
         FindAndAssignTilemaps();
 
         if (floorTilemap == null)
         {
-            Debug.LogError("Grid : floorTilemap을 찾을 수 없습니다.");
             return;
         }
 
@@ -46,16 +36,13 @@ public class Grid : MonoBehaviour
     {
         if (player == null)
         {
-            GameObject playerObject =
-                GameObject.FindWithTag("Player");
-
+            GameObject playerObject = GameObject.FindWithTag("Player");
             if (playerObject != null)
             {
                 player = playerObject.transform;
             }
         }
     }
-
     private void FindAndAssignTilemaps()
     {
         if (floorTilemap == null)
@@ -77,18 +64,10 @@ public class Grid : MonoBehaviour
         }
     }
 
-
-    // =========================================================
-    // Grid 생성
-    // =========================================================
-
     public void CreateGrid()
     {
         isGridCreated = false;
-
-        // -----------------------------------------------------
         // Floor Tilemap을 Grid의 기준으로 사용
-        // -----------------------------------------------------
         floorTilemap.CompressBounds();
         bounds = floorTilemap.cellBounds;
 
@@ -97,16 +76,11 @@ public class Grid : MonoBehaviour
 
         if (gridSizeX <= 0 || gridSizeY <= 0)
         {
-            Debug.LogError("Grid : Floor Tilemap에 타일이 없습니다.");
             return;
         }
 
-        grid = new Node[gridSizeX, gridSizeY];
-
-
-        // -----------------------------------------------------
         // Node 생성
-        // -----------------------------------------------------
+        grid = new Node[gridSizeX, gridSizeY];
         for (int x = 0; x < gridSizeX; x++)
         {
             for (int y = 0; y < gridSizeY; y++)
@@ -116,13 +90,10 @@ public class Grid : MonoBehaviour
                     bounds.yMin + y,
                     0
                 );
-
-
-                // 1. Floor가 존재해야 기본적으로 이동 가능
+                // Floor가 존재해야 이동 가능
                 bool walkable = floorTilemap.HasTile(cellPos);
 
-
-                // 2. WallBack 또는 WallFront 타일이 하나라도 존재하면 이동 불가능 처리
+                // WallBack 또는 WallFront 타일이 하나라도 존재하면 이동 불가능
                 if (wallBackTilemap != null && wallBackTilemap.HasTile(cellPos))
                 {
                     walkable = false;
@@ -132,11 +103,8 @@ public class Grid : MonoBehaviour
                 {
                     walkable = false;
                 }
-
-
                 // Floor Tilemap의 실제 Cell 중앙 월드 좌표
                 Vector3 nodePosition = floorTilemap.GetCellCenterWorld(cellPos);
-
 
                 grid[x, y] = new Node(
                     walkable,
@@ -146,19 +114,8 @@ public class Grid : MonoBehaviour
                 );
             }
         }
-
-
         isGridCreated = true;
-
-        Debug.Log(
-            $"Grid 생성 완료 : {gridSizeX} x {gridSizeY}"
-        );
     }
-
-
-    // =========================================================
-    // 이웃 Node
-    // =========================================================
 
     public List<Node> GetNeighbours(Node node)
     {
@@ -172,10 +129,8 @@ public class Grid : MonoBehaviour
                 if (x == 0 && y == 0)
                     continue;
 
-
                 int checkX = node.gridX + x;
                 int checkY = node.gridY + y;
-
 
                 // Grid 범위 체크
                 if (checkX < 0 ||
@@ -186,23 +141,17 @@ public class Grid : MonoBehaviour
                     continue;
                 }
 
-
                 Node targetNode = grid[checkX, checkY];
-
 
                 // 이동 불가능한 칸
                 if (!targetNode.isWalkable)
                     continue;
 
-
-                // -------------------------------------------------
                 // 대각선 이동
-                // -------------------------------------------------
                 if (x != 0 && y != 0)
                 {
                     Node horizontalNode = grid[node.gridX + x, node.gridY];
                     Node verticalNode = grid[node.gridX, node.gridY + y];
-
 
                     // 벽 사이 대각선 통과 방지
                     if (!horizontalNode.isWalkable || !verticalNode.isWalkable)
@@ -210,8 +159,6 @@ public class Grid : MonoBehaviour
                         continue;
                     }
                 }
-
-
                 neighbours.Add(targetNode);
             }
         }
@@ -221,10 +168,7 @@ public class Grid : MonoBehaviour
     }
 
 
-    // =========================================================
     // 월드 좌표 → Node
-    // =========================================================
-
     public Node GetNodeFromPosition(Vector3 worldPosition)
     {
         if (grid == null || floorTilemap == null)
@@ -249,20 +193,10 @@ public class Grid : MonoBehaviour
         return grid[x, y];
     }
 
-
-    // =========================================================
-    // Player 설정
-    // =========================================================
-
     public void SetPlayer(Transform newPlayer)
     {
         player = newPlayer;
     }
-
-
-    // =========================================================
-    // 전체 Node 가져오기
-    // =========================================================
 
     public IEnumerable<Node> GetAllNodes()
     {

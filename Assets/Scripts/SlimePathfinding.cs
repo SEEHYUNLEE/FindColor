@@ -31,9 +31,7 @@ public class SlimePathfinding : MonoBehaviour
 
         if (player == null)
         {
-            GameObject playerObject =
-                GameObject.FindWithTag("Player");
-
+            GameObject playerObject = GameObject.FindWithTag("Player");
             if (playerObject != null)
             {
                 player = playerObject.transform;
@@ -106,6 +104,7 @@ public class SlimePathfinding : MonoBehaviour
         foreach (Node node in grid.GetAllNodes())
         {
             node.gCost = int.MaxValue;
+            node.hCost = 0;
             node.parent = null;
         }
 
@@ -305,8 +304,6 @@ public class SlimePathfinding : MonoBehaviour
         if (currentDestination != null)
         {
             Gizmos.color = Color.red;
-
-
             Gizmos.DrawSphere(currentDestination.position,0.4f);
         }
     }
