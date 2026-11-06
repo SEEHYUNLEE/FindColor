@@ -25,9 +25,6 @@ public class MapGenerator : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Button generateButton;
 
-    // =========================================================
-    // 추가된 엔티티 생성 관련 설정
-    // =========================================================
     [Header("Spawning")]
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject slimePrefab;
@@ -37,11 +34,6 @@ public class MapGenerator : MonoBehaviour
 
     [HideInInspector]
     public List<Vector3Int> roomCenters = new List<Vector3Int>();
-
-
-    // =========================================================
-    // Start
-    // =========================================================
 
     private void Start()
     {
@@ -97,27 +89,24 @@ public class MapGenerator : MonoBehaviour
 
     private void SpawnEntities()
     {
-        if (roomCenters.Count == 0) return;
+        if (roomCenters.Count < 2) return;
 
         // roomCenters 복사본 생성 후 무작위 셔플
         List<Vector3Int> availableCenters = new List<Vector3Int>(roomCenters);
         ShuffleList(availableCenters);
 
         // 1. 플레이어 생성 (첫 번째 무작위 방)
-        if (playerPrefab != null && availableCenters.Count > 0)
+        if (playerPrefab != null)
         {
             Vector3 spawnPos = tileMap.CellToWorld(availableCenters[0]) + new Vector3(0.5f, 0.5f, 0f);
             GameObject player = Instantiate(playerPrefab, spawnPos, Quaternion.identity);
             spawnedObjects.Add(player);
-
-            // 플레이어가 생성된 방은 목록에서 제거
-            availableCenters.RemoveAt(0);
         }
 
-        // 2. 슬라임 생성 (남은 방 중 무작위 1개 방에만 1마리 생성)
-        if (slimePrefab != null && availableCenters.Count > 0)
+        // 2. 슬라임 생성 (두 번째 무작위 방)
+        if (slimePrefab != null)
         {
-            Vector3 spawnPos = tileMap.CellToWorld(availableCenters[0]) + new Vector3(0.5f, 0.5f, 0f);
+            Vector3 spawnPos = tileMap.CellToWorld(availableCenters[1]) + new Vector3(0.5f, 0.5f, 0f);
             GameObject slime = Instantiate(slimePrefab, spawnPos, Quaternion.identity);
             spawnedObjects.Add(slime);
         }

@@ -34,10 +34,7 @@ public class MissilePool : MonoBehaviour
         // 풀에 미사일이 없으면 하나 더 생성
         if (missilePool.Count == 0)
         {
-            BossMissile newMissile = Instantiate(
-                missilePrefab,
-                transform
-            );
+            BossMissile newMissile = Instantiate(missilePrefab, transform);
 
             newMissile.gameObject.SetActive(false);
 

@@ -54,8 +54,8 @@ public class Boss : MonoBehaviour
                 Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
 
                 BossMissile missile = MissilePool.Instance.GetMissile();
-                
-                // 중앙에서 거리를 두고 생성
+
+                // 보스 중심에서 1만큼 떨어진 곳에서 생성
                 missile.transform.position = transform.position + (Vector3)(direction);
 
                 missile.Initialize(direction, missileSpeed, true);
@@ -82,7 +82,7 @@ public class Boss : MonoBehaviour
             // 보스 중심에서 1만큼 떨어진 곳에서 생성
             missile.transform.position = transform.position + (Vector3)direction;
 
-            // 휘지 않고 직선으로 발사
+            // 직선으로 발사
             missile.Initialize(direction, missileSpeed, false);
         }
     }

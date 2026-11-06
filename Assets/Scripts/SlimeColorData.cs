@@ -55,7 +55,7 @@ public static class SlimeColorPalette
         new SlimeHexData(SlimeColorType.Violet, "#9933CC")
     };
 
-    // 정적 생성자: 최초 호출 시 HEX 문자열을 Color로 변환하여 Colors 배열 초기화
+    // 최초 호출 시 HEX 문자열을 Color로 변환하여 Colors 배열 초기화
     public static readonly SlimeColorData[] Colors;
 
     static SlimeColorPalette()

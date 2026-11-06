@@ -85,33 +85,21 @@ public class Grid : MonoBehaviour
         {
             for (int y = 0; y < gridSizeY; y++)
             {
-                Vector3Int cellPos = new Vector3Int(
-                    bounds.xMin + x,
-                    bounds.yMin + y,
-                    0
-                );
+                Vector3Int cellPos = new Vector3Int(bounds.xMin + x, bounds.yMin + y, 0);
                 // Floor가 존재해야 이동 가능
                 bool walkable = floorTilemap.HasTile(cellPos);
 
                 // WallBack 또는 WallFront 타일이 하나라도 존재하면 이동 불가능
                 if (wallBackTilemap != null && wallBackTilemap.HasTile(cellPos))
-                {
                     walkable = false;
-                }
 
                 if (wallFrontTilemap != null && wallFrontTilemap.HasTile(cellPos))
-                {
                     walkable = false;
-                }
+
                 // Floor Tilemap의 실제 Cell 중앙 월드 좌표
                 Vector3 nodePosition = floorTilemap.GetCellCenterWorld(cellPos);
 
-                grid[x, y] = new Node(
-                    walkable,
-                    nodePosition,
-                    x,
-                    y
-                );
+                grid[x, y] = new Node(walkable, nodePosition, x, y);
             }
         }
         isGridCreated = true;
@@ -120,7 +108,6 @@ public class Grid : MonoBehaviour
     public List<Node> GetNeighbours(Node node)
     {
         List<Node> neighbours = new List<Node>();
-
 
         for (int x = -1; x <= 1; x++)
         {
@@ -133,13 +120,8 @@ public class Grid : MonoBehaviour
                 int checkY = node.gridY + y;
 
                 // Grid 범위 체크
-                if (checkX < 0 ||
-                    checkX >= gridSizeX ||
-                    checkY < 0 ||
-                    checkY >= gridSizeY)
-                {
+                if (checkX < 0 || checkX >= gridSizeX || checkY < 0 || checkY >= gridSizeY)
                     continue;
-                }
 
                 Node targetNode = grid[checkX, checkY];
 
@@ -154,16 +136,12 @@ public class Grid : MonoBehaviour
                     Node verticalNode = grid[node.gridX, node.gridY + y];
 
                     // 벽 사이 대각선 통과 방지
-                    if (!horizontalNode.isWalkable || !verticalNode.isWalkable)
-                    {
+                    if (!horizontalNode.isWalkable && !verticalNode.isWalkable)
                         continue;
-                    }
                 }
                 neighbours.Add(targetNode);
             }
         }
-
-
         return neighbours;
     }
 
