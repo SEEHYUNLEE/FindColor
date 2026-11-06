@@ -59,7 +59,7 @@ public class UpgradeUI : MonoBehaviour
         AudioManager.Instance.PlaySFX(SFXType.Click);
         if (DataManager.Instance.UpgradeStat(StatType.Damage))
         {
-            // AttackEffect는 생성이 시점(Start)에 데이터를 읽으므로 별도 호출 필요 없음
+            // AttackEffect는 생성될 때 데이터를 읽으므로 별도 호출 필요 없음
             UpdateUI();
         }
     }

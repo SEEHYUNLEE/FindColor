@@ -23,11 +23,7 @@ public class Node : IComparable<Node>
 
     public Node parent;
 
-    public Node(
-        bool walkable,
-        Vector3 position,
-        int gridX,
-        int gridY)
+    public Node(bool walkable, Vector3 position, int gridX, int gridY)
     {
         this.isWalkable = walkable;
         this.position = position;

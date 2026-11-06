@@ -95,9 +95,7 @@ public class DataManager : MonoBehaviour
     {
         // 덮어쓰기 방지
         if (!isSlotLoaded || currentSlotIndex < 1)
-        {
             return;
-        }
 
         string path = GetSavePath(currentSlotIndex);
         string json = JsonConvert.SerializeObject(currentData, Formatting.Indented);

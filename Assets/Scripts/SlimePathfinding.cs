@@ -144,14 +144,6 @@ public class SlimePathfinding : MonoBehaviour
             if (!node.isWalkable)
                 continue;
 
-            // 플레이어에게 도달할 수 없는 Node 제외
-            if (node.gCost == int.MaxValue)
-                continue;
-
-            // 플레이어가 있는 Node는 목적지에서 제외
-            if (node == playerNode)
-                continue;
-
             if (node.gCost > maxDistance)
             {
                 maxDistance = node.gCost;

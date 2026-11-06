@@ -40,13 +40,10 @@ public class BossMissile : MonoBehaviour
     {
         if (hasHit)
             return;
-        // 휘어지는 미사일만 방향을 회전시킨다.
+        // 휘어지는 미사일만
         if (isCurve)
         {
-            direction = RotateVector(
-                direction,
-                curveSpeed * Time.deltaTime
-            );
+            direction = RotateVector(direction, curveSpeed * Time.deltaTime);
         }
 
         // 계속 앞으로 이동
